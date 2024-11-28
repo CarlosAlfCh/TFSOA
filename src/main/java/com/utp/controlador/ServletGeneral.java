@@ -15,6 +15,7 @@ import com.utp.modelo.HabitacionDAO;
 import com.utp.modelo.ServicioDAO;
 import com.utp.modelo.ReservaDAO;
 import com.utp.modelo.PagoDAO;
+import com.utp.modelo.RewardsDAO;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -25,10 +26,17 @@ public class ServletGeneral extends HttpServlet {
     //temporales carrito
     int itemserv = 0;
     int itemroom = 0;
-    
+
+    //temporales de descuento
+    RewardsDAO rewardsDAO = new RewardsDAO();
+    double montodescuento = 0.0;
+    int descuento = 0;
+
+    double subtotal = 0.0;
+
     double totalPagar = 0.0;
     int cantidad;
-    int idpago;
+    int idpago = 0;
 
     List<DetalleReserva> listaServices = new ArrayList<>();
 
@@ -55,6 +63,9 @@ public class ServletGeneral extends HttpServlet {
         request.setAttribute("fservicio", fservicio);
         request.setAttribute("viewserv", itemserv);
         request.setAttribute("viewroom", itemroom);
+        request.setAttribute("descuento", montodescuento);
+        request.setAttribute("porcentaje", descuento);
+
         try {
             if (menu != null) {
                 switch (menu) {
@@ -62,13 +73,14 @@ public class ServletGeneral extends HttpServlet {
                         pagar(request, response);
                         break;
                     case "buy":
-                        System.out.println("in");
-                        actuaFechaXServicio(request, response);
+                        actuaFechaXServicio();
                         generarcita(request, response);
-                        System.out.println("out");
                         break;
                     case "fecha":
                         agendar(request, response);
+                        break;
+                    case "cupon":
+                        cuponpromo(request, response);
                         break;
                     case "habitacion":
                         habitacion(request, response);
@@ -84,14 +96,15 @@ public class ServletGeneral extends HttpServlet {
 
                                     request.getSession().removeAttribute("cliente");
 
-                                    itemserv=0;
-                                    itemroom=0;
+                                    itemserv = 0;
+                                    itemroom = 0;
                                     listaServices = new ArrayList<>();
                                     idpago = 0;
                                     fservicio = null;
                                     fechaIngreso = null;
                                     fechaSalida = null;
-                                    
+                                    descuento=0;
+
                                     request.setAttribute("codpago", idpago);
                                     request.setAttribute("cart", listaServices);
                                     response.sendRedirect("login.jsp");
@@ -188,6 +201,7 @@ public class ServletGeneral extends HttpServlet {
     }// </editor-fold>
 
     private void reservaService(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        subtotal = 0.0;
         totalPagar = 0.0;
 
         // Valor por defecto
@@ -218,20 +232,29 @@ public class ServletGeneral extends HttpServlet {
         }
 
         for (int i = 0; i < listaServices.size(); i++) {
-            totalPagar = totalPagar + listaServices.get(i).getTotal();
+            subtotal = subtotal + listaServices.get(i).getTotal();
         }
+        
+        montodescuento=(subtotal*descuento)/100;
+
+        totalPagar = subtotal - montodescuento;
+
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
+        request.setAttribute("totalpagar", totalPagar);
 
         request.setAttribute("codpago", idpago);
-        request.setAttribute("totalpagar", totalPagar);
         request.setAttribute("cart", listaServices);
         request.setAttribute("cont", listaServices.size());
         request.setAttribute("viewserv", itemserv);
-        
+
         request.getRequestDispatcher("orders.jsp").forward(request, response);
     }
 
     private void reservaRoom(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // Valor por defecto
+        subtotal = 0.0;
         totalPagar = 0.0;
         idroom = 0;
 
@@ -273,11 +296,19 @@ public class ServletGeneral extends HttpServlet {
         }
 
         for (int i = 0; i < listaServices.size(); i++) {
-            totalPagar = totalPagar + listaServices.get(i).getTotal();
+            subtotal = subtotal + listaServices.get(i).getTotal();
         }
+        
+        montodescuento=(subtotal*descuento)/100;
+
+        totalPagar = subtotal - montodescuento;
+
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
+        request.setAttribute("totalpagar", totalPagar);
 
         request.setAttribute("codpago", idpago);
-        request.setAttribute("totalpagar", totalPagar);
         request.setAttribute("cart", listaServices);
         request.setAttribute("cont", listaServices.size());
         request.setAttribute("viewroom", itemroom);
@@ -332,40 +363,59 @@ public class ServletGeneral extends HttpServlet {
     }
 
     private void vereserva(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        subtotal = 0.0;
         totalPagar = 0.0;
 
         for (int i = 0; i < listaServices.size(); i++) {
-            totalPagar = totalPagar + listaServices.get(i).getTotal();
+            subtotal = subtotal + listaServices.get(i).getTotal();
         }
+        
+        montodescuento=(subtotal*descuento)/100;
+
+        totalPagar = subtotal - montodescuento;
+
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
+        request.setAttribute("totalpagar", totalPagar);
 
         request.setAttribute("cart", listaServices);
-        request.setAttribute("totalpagar", totalPagar);
         request.setAttribute("codpago", idpago);
         request.getRequestDispatcher("orders.jsp").forward(request, response);
 
     }
 
     private void eliminarservicio(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+        subtotal = 0.0;
         totalPagar = 0.0;
 
         //ELiminar servicio de spa
         int id = Integer.parseInt(request.getParameter("idserv"));
-        
+
         System.out.println(id);
 
         for (int i = 0; i < listaServices.size(); i++) {
             if (listaServices.get(i).getIdservicio() == id) {
                 listaServices.remove(i);
-                itemserv=itemserv-1;
+                itemserv = itemserv - 1;
             }
         }
 
         for (DetalleReserva reserva : listaServices) {
-            totalPagar += reserva.getTotal();
+            subtotal += reserva.getTotal();
         }
-        request.setAttribute("codpago", idpago);
+
+        montodescuento=(subtotal*descuento)/100;
+        
+        totalPagar = subtotal - montodescuento;
+
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
         request.setAttribute("totalpagar", totalPagar);
+
+        request.setAttribute("codpago", idpago);
+
         request.setAttribute("cart", listaServices);
         request.setAttribute("cont", listaServices.size());
         request.setAttribute("viewserv", itemserv);
@@ -373,7 +423,7 @@ public class ServletGeneral extends HttpServlet {
     }
 
     private void eliminaroom(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+        subtotal = 0.0;
         totalPagar = 0.0;
 
         //ELiminar habitacion
@@ -382,15 +432,25 @@ public class ServletGeneral extends HttpServlet {
         for (int i = 0; i < listaServices.size(); i++) {
             if (listaServices.get(i).getIdhabitacion() == id) {
                 listaServices.remove(i);
-                itemroom=itemroom-1;
+                itemroom = itemroom - 1;
             }
         }
 
         for (DetalleReserva reserva : listaServices) {
-            totalPagar += reserva.getTotal();
+            subtotal += reserva.getTotal();
         }
-        request.setAttribute("codpago", idpago);
+        
+        montodescuento=(subtotal*descuento)/100;
+
+        totalPagar = subtotal - montodescuento;
+
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
         request.setAttribute("totalpagar", totalPagar);
+
+        request.setAttribute("codpago", idpago);
+
         request.setAttribute("cart", listaServices);
         request.setAttribute("cont", listaServices.size());
         request.setAttribute("viewroom", itemroom);
@@ -398,6 +458,7 @@ public class ServletGeneral extends HttpServlet {
     }
 
     private void mas(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        subtotal = 0.0;
         totalPagar = 0.0;
 
         int posicion = -1;
@@ -420,18 +481,27 @@ public class ServletGeneral extends HttpServlet {
         }
 
         for (DetalleReserva reserva : listaServices) {
-            totalPagar += reserva.getTotal();
+            subtotal += reserva.getTotal();
         }
+        
+        montodescuento=(subtotal*descuento)/100;
+
+        totalPagar = subtotal - montodescuento;
+
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
+        request.setAttribute("totalpagar", totalPagar);
 
         request.setAttribute("codpago", idpago);
         request.setAttribute("cart", listaServices);
-        request.setAttribute("totalpagar", totalPagar);
         request.setAttribute("cont", listaServices.size());
 
         request.getRequestDispatcher("orders.jsp").forward(request, response);
     }
 
     private void menos(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        subtotal = 0.0;
         totalPagar = 0.0;
 
         int posicion = -1;
@@ -454,12 +524,20 @@ public class ServletGeneral extends HttpServlet {
         }
 
         for (DetalleReserva reserva : listaServices) {
-            totalPagar += reserva.getTotal();
+            subtotal += reserva.getTotal();
         }
+
+        montodescuento=(subtotal*descuento)/100;
+        
+        totalPagar = subtotal - montodescuento;
+
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
+        request.setAttribute("totalpagar", totalPagar);
 
         request.setAttribute("codpago", idpago);
         request.setAttribute("cart", listaServices);
-        request.setAttribute("totalpagar", totalPagar);
         request.setAttribute("cont", listaServices.size());
 
         request.getRequestDispatcher("orders.jsp").forward(request, response);
@@ -475,9 +553,13 @@ public class ServletGeneral extends HttpServlet {
 
         idpago = pagoDAO.insertpago(cod, metodo, fecha);
 
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
+        request.setAttribute("totalpagar", totalPagar);
+
         request.setAttribute("codpago", idpago);
         request.setAttribute("cart", listaServices);
-        request.setAttribute("totalpagar", totalPagar);
         request.setAttribute("cont", listaServices.size());
         request.getRequestDispatcher("orders.jsp").forward(request, response);
     }
@@ -543,23 +625,27 @@ public class ServletGeneral extends HttpServlet {
                 System.out.println(listaServices.get(i).getIdservicio() + " " + listaServices.get(i).getFechaServicio());
             }
         }
+        
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
+        request.setAttribute("totalpagar", totalPagar);
 
         request.setAttribute("fservicio", fservicio);
         request.setAttribute("codpago", idpago);
         request.setAttribute("cart", listaServices);
-        request.setAttribute("totalpagar", totalPagar);
         request.setAttribute("cont", listaServices.size());
         request.getRequestDispatcher("orders.jsp").forward(request, response);
     }
 
-    private void actuaFechaXServicio(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void actuaFechaXServicio() {
 
         for (int i = 0; i < listaServices.size(); i++) {
             if (listaServices.get(i).getIdservicio() != 0) {
                 listaServices.get(i).setFechaServicio(fservicio);
                 System.out.println(listaServices.get(i).getIdservicio() + " " + listaServices.get(i).getFechaServicio());
             }
-        }        
+        }
     }
 
     private void habitacion(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -573,5 +659,40 @@ public class ServletGeneral extends HttpServlet {
         request.setAttribute("room", room);
         request.setAttribute("cont", listaServices.size());
         request.getRequestDispatcher("habitacion.jsp").forward(request, response);
+    }
+
+    private void cuponpromo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        subtotal = 0.0;
+        totalPagar = 0.0;
+        
+        int idclinete = Integer.parseInt(request.getParameter("txtidcliente"));
+        String codpromo = request.getParameter("txtcodpromo");
+
+        System.out.println(subtotal);
+        
+        for (DetalleReserva reserva : listaServices) {
+            subtotal += reserva.getTotal();
+        }
+        
+        System.out.println(subtotal);
+        
+        descuento = rewardsDAO.canjearCodPromo(idclinete, codpromo);
+
+        montodescuento=(subtotal*descuento)/100;
+        
+        totalPagar = subtotal - montodescuento;
+
+        request.setAttribute("subtotal", subtotal);
+        request.setAttribute("porcentaje", descuento);
+        request.setAttribute("descuento", montodescuento);
+        request.setAttribute("totalpagar", totalPagar);
+
+        request.setAttribute("fservicio", fservicio);
+        request.setAttribute("codpago", idpago);
+
+        request.setAttribute("cart", listaServices);
+        request.setAttribute("cont", listaServices.size());
+        request.getRequestDispatcher("orders.jsp").forward(request, response);
     }
 }

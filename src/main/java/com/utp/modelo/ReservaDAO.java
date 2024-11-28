@@ -21,7 +21,7 @@ public class ReservaDAO {
 
     public int GenerarReserva(Reserva reserva) {
         int idreserva = 0;
-        System.out.println("entre");
+        
         String sql = "insert into reserva(id_cliente, id_pago, f_reserva, monto, estado, f_atencion, f_check_in, f_check_out) values(?,?,?,?,?,?,?,?)";
         try {
             conn = cn.conectar();
@@ -30,14 +30,14 @@ public class ReservaDAO {
             ps.setInt(2, reserva.getIdpago());
             ps.setString(3, reserva.getFecha());
             ps.setDouble(4, reserva.getMonto());
-            ps.setInt(5, 0);
+            ps.setInt(5, 1);
             ps.setDate(6, reserva.getFechaServicio() != null ? Date.valueOf(reserva.getFechaServicio()) : null);
             ps.setDate(7, reserva.getFechaIngreso() != null ? Date.valueOf(reserva.getFechaIngreso()) : null);
             ps.setDate(8, reserva.getFechaSalida() != null ? Date.valueOf(reserva.getFechaSalida()) : null);
 
             r = ps.executeUpdate();
 
-            System.out.println(reserva.getIdpago() + " - " + r + " inserte el id");
+            System.out.println(reserva.getIdpago() + " - " + r);
 
             sql = "select id_reserva from reserva where id_pago=?";
             ps = conn.prepareStatement(sql);
@@ -47,7 +47,7 @@ public class ReservaDAO {
                 idreserva = rs.getInt("id_reserva");
             }
 
-            System.out.println("busque id reserva " + idreserva);
+            System.out.println("id reserva " + idreserva);
 
             for (DetalleReserva detalle : reserva.getDetalleService()) {
 
@@ -150,65 +150,5 @@ public class ReservaDAO {
             System.out.println(e.toString());
         }
         return c;
-    }
-
-    public int asignar(int idreserva, int idtecnico) {
-        String sql = "UPDATE reserva SET id_tecnico=? WHERE id_reserva=" + idreserva;
-        try {
-            conn = cn.conectar();
-            ps = conn.prepareStatement(sql);
-
-            ps.setInt(1, idtecnico);
-
-            r = ps.executeUpdate();
-            if (r == 1) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return r;
-    }
-
-    public int quitar(int idreserva) {
-        String sql = "UPDATE reserva SET id_tecnico=? WHERE id_reserva=" + idreserva;
-        try {
-            conn = cn.conectar();
-            ps = conn.prepareStatement(sql);
-
-            ps.setInt(1, 0);
-
-            r = ps.executeUpdate();
-            if (r == 1) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return r;
-    }
-
-    public int marcar(int idreserva) {
-        String sql = "UPDATE reserva SET estado=? WHERE id_reserva=" + idreserva;
-        try {
-            conn = cn.conectar();
-            ps = conn.prepareStatement(sql);
-
-            ps.setInt(1, 1);
-
-            r = ps.executeUpdate();
-            if (r == 1) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return r;
-    }
+    }    
 }

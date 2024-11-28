@@ -45,7 +45,7 @@ public class AutenticacionDAO {
             conn = cn.conectar();
             ps = conn.prepareStatement(sql);
             ps.setString(1, recupera);
-            ps.setString(2, correo); // Removido el LIKE y el %
+            ps.setString(2, correo);
             r = ps.executeUpdate();
             System.out.println("Codigo de recuperacion actualizado: " + recupera + " para correo: " + correo);
             if (r == 0) {

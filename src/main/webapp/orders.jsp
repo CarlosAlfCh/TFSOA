@@ -61,7 +61,7 @@
         <% SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy"); %>
         <% String fechaFormateada = formatoFecha.format(fechaActual);%>
         <fmt:parseDate value="${fservicio}" pattern="yyyy-MM-dd" var="parsedDate" type="date"/>
-        
+
         <div class="container">
             <div class="container mt-4">
                 <div class="row">
@@ -69,7 +69,7 @@
                         <h2 class="fw-bold">Reserva de Cita</h2>
                     </div>
                     <div class="col-md-4 text-end">
-                        <c:if test="${codpago > 0}"><h4>N° ${codpago}</h4></c:if>
+                        <c:if test="${codpago > 0}"><h4>N° 000000${codpago}</h4></c:if>
                         </div>
                     </div>
 
@@ -88,10 +88,10 @@
                     </div>
                     <c:if test="${fservicio != null}">
                         <div class="col-md-4" style="color: #4c3d3d">
-                           <strong>Fecha servicio SPA:</strong> <fmt:formatDate value="${parsedDate}" pattern="dd/MM/yyyy"/>
+                            <strong>Fecha servicio SPA:</strong> <fmt:formatDate value="${parsedDate}" pattern="dd/MM/yyyy"/>
                         </div>           
                     </c:if>
-                    
+
                 </div>
             </div>
 
@@ -133,7 +133,7 @@
                                                     <!-- Detalles básicos -->
                                                     <fmt:parseDate value="${car.getFechaIngreso()}" pattern="yyyy-MM-dd" var="parsedin" type="date"/>
                                                     <fmt:parseDate value="${car.getFechaSalida()}" pattern="yyyy-MM-dd" var="parsedout" type="date"/>
-                                                    
+
                                                     <div class="mb-4">
                                                         <div class="d-flex justify-content-between mb-2">
                                                             <span class="text-muted"><i class="fas fa-calendar-check text-muted me-2"></i> Fecha ingreso:</span>
@@ -231,7 +231,7 @@
                             </tbody>
                         </table>
                     </c:if>
-                    
+
                     <c:if test="${viewserv==0 && codpago == 0}">
                         <a class="btn btn-outline-secondary btn-block" href="ServletGeneral?menu=carrito&accion=volver">Agregar Servicio de SPA</a>
                     </c:if>
@@ -299,9 +299,37 @@
                                 </c:if>
                                 <input type="hidden" name="code" value="${cliente.getCodigo()}">
                                 <label style="color: #4c3d3d">Subtotal</label>
-                                <input type="text" name="name" value="S/ ${totalpagar}0" readonly="" class="form-control"><br>
+                                <input type="text" name="name" value="S/ ${subtotal}0" readonly="" class="form-control"><br>
                                 <label style="color: #4c3d3d">Descuento</label>
-                                <input type="text" name="name" value="S/ 0.00" readonly="" class="form-control"><br>
+
+                                <c:if test="${porcentaje == 0}">
+
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small" value="S/ 0.00"
+                                               aria-label="Search" aria-describedby="basic-addon2" readonly>
+
+                                        <div class="input-group-append">
+                                            <a class="btn btn-success" data-toggle="modal" data-target="#modal" >
+                                                <i class="fas fa-plus fa-sm"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </c:if>
+
+                                <c:if test="${porcentaje > 0}">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small" value="S/ ${descuento}0"
+                                               aria-label="Search" aria-describedby="basic-addon2" readonly>
+
+                                        <div class="input-group-append">
+                                            <div class="btn btn-success">
+                                                ${porcentaje}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:if>
+
                                 <label style="color: #4c3d3d">Total a pagar</label>
                                 <input type="text" name="name" value="S/ ${totalpagar}0" readonly="" class="form-control">
                             </div>
@@ -335,6 +363,50 @@
                 </div>
             </div>
         </div>
+                            
+        <!-- Canjear Modal-->
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Canjear codigo promocional</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <form action="ServletGeneral" method="post">                                    
+                        <div class="modal-body">
+                            <div class="card-header">
+                                <label style="color: #4c3d3d">
+                                    Revise en su correo si tiene algun codigo de descuento<br> 
+                                    Enviado a correo: ${cliente.getCorreo()}
+                                </label>                                          
+                            </div>
+                            <div class="card-body">
+                                <input type="hidden" name="txtidcliente" value="${cliente.getCodigo()}">
+
+                                <div class="input-group">
+                                    <input type="text" class="form-control bg-light border-0 small" placeholder="Ingrese codigo de descuento..."
+                                           aria-label="Search" aria-describedby="basic-addon2" name="txtcodpromo">
+                                    <div class="input-group-addon">
+                                        <div class="btn btn-info">
+                                            <i class=" fas fa-envelope fa-sm"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button class="btn btn-primary" name="menu" value="cupon">Canjear</button>
+                        </div>  
+                    </form>
+                </div>
+            </div>
+        </div>
+                                
     </body>
 
     <%@include file="includes/footer.jsp"%>

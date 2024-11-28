@@ -2,11 +2,13 @@ package com.utp.controlador;
 
 import com.utp.entidad.Cliente;
 import com.utp.entidad.Usuario;
+import com.utp.entidad.pagos.Reserva;
 import com.utp.modelo.ClienteDAO;
 import com.utp.modelo.ReservaDAO;
 import com.utp.modelo.UsuarioDAO;
 import com.utp.modelo.AutenticacionDAO;
 import com.utp.mensajes.RecoverPassword;
+import com.utp.modelo.DetalleServicioDAO;
 
 import java.io.IOException;
 
@@ -20,21 +22,22 @@ import javax.servlet.http.HttpSession;
 
 @WebServlet(name = "ServletValida", urlPatterns = {"/ServletValida"})
 public class ServletValida extends HttpServlet {
-        Usuario user = new Usuario();
-        UsuarioDAO userdao = new UsuarioDAO();
-        AutenticacionDAO autenticacionDAO = new AutenticacionDAO();
-        Cliente cliente = new Cliente();
-        ClienteDAO clienteDAO = new ClienteDAO();
-        ReservaDAO reservadao = new ReservaDAO();
-        RecoverPassword recoverPassword = new RecoverPassword();
-        
+
+    Usuario user = new Usuario();
+    UsuarioDAO userdao = new UsuarioDAO();
+    AutenticacionDAO autenticacionDAO = new AutenticacionDAO();
+    Cliente cliente = new Cliente();
+    ClienteDAO clienteDAO = new ClienteDAO();
+    ReservaDAO reservadao = new ReservaDAO();
+    RecoverPassword recoverPassword = new RecoverPassword();
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        String metodo = request.getParameter("metodo");       
+
+        String metodo = request.getParameter("metodo");
 
         try {
-            if(metodo!=null){
+            if (metodo != null) {
                 switch (metodo) {
                     case "loguear":
                         verificar(request, response);
@@ -57,7 +60,7 @@ public class ServletValida extends HttpServlet {
             }
         } catch (Exception e) {
             System.out.println(e.toString());
-        }        
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -100,49 +103,60 @@ public class ServletValida extends HttpServlet {
     }// </editor-fold>
 
     private void verificar(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        
+
         String correo = request.getParameter("txtcorreo");
         String contrasena = request.getParameter("txtcontrasena");
-        user= autenticacionDAO.validar(correo, contrasena);
-         
-        
-        if(user.getRol()!=4){
-            List listres = reservadao.listasign(user.getCodigo());
-            
-            int ms = listres.size();
-            request.getSession().setAttribute("usuario", user);
-            
-            request.getSession().setAttribute("asig", listres);    
-            
-            request.getSession().setAttribute("msj", ms);  
-            
-            request.getRequestDispatcher("Controlador?menu=principal").forward(request, response);   
-        } else {
-            if(user.getRol()==4){
-                request.getSession().setAttribute("cliente", user);
-                
-                request.getRequestDispatcher("index.jsp").forward(request, response);
-            }else{
-                request.setAttribute("msj", "Clave o Contraseña incorrecta");
-                request.getRequestDispatcher("login.jsp").forward(request, response); 
-            }                
+
+        // Verificar si los parámetros son nulos o vacíos
+        if (correo == null || contrasena == null || correo.isEmpty() || contrasena.isEmpty()) {
+            request.setAttribute("msj", "Por favor ingrese su correo y contraseña.");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         }
+
+        // Validar usuario
+        Usuario user = autenticacionDAO.validar(correo, contrasena);
+        System.out.println(user.getRol());
+
+        if (user.getRol() == 0) {
+            // Usuario no encontrado o credenciales incorrectas
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
+
+        // Configurar objetos auxiliares
+        ReservaDAO reservaDAO = new ReservaDAO();
+
+        if (user.getRol() != 4) {
+            // Usuario no cliente
+            List<Reserva> listres = reservaDAO.listasign(user.getCodigo());
+            int ms = listres.size();
+
+            request.getSession().setAttribute("usuario", user);
+            request.getSession().setAttribute("asig", listres);
+            request.getSession().setAttribute("msj", ms);
+
+            request.getRequestDispatcher("Controlador?menu=principal").forward(request, response);
+        } else {
+            // Usuario cliente
+            request.getSession().setAttribute("cliente", user);
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+        }
+
     }
-    
-    private void registrarse(HttpServletRequest request, HttpServletResponse response)throws Exception{
+
+    private void registrarse(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession sesion;
-        
+
         String nombres = request.getParameter("txtnombres");
         String apelpat = request.getParameter("txtapelpat");
         String apelmat = request.getParameter("txtapelmat");
         String dni = request.getParameter("txtdni");
         String telefono = request.getParameter("txttelefono");
-        
+
         String direccion = request.getParameter("txtdireccion");
         int distrito = Integer.parseInt(request.getParameter("txtdistrito"));
         String correo = request.getParameter("txtcorreo");
         String contrasena = request.getParameter("txtcontrasena");
-        
+
         cliente.setNombres(nombres);
         cliente.setApelpat(apelpat);
         cliente.setApelmat(apelmat);
@@ -152,35 +166,35 @@ public class ServletValida extends HttpServlet {
         cliente.setDistrito(distrito);
         cliente.setCorreo(correo);
         cliente.setContrasena(contrasena);
-        
-        int resp = clienteDAO.insertar(cliente); 
+
+        int resp = clienteDAO.insertar(cliente);
         System.out.println(resp);
-        
+
         request.setAttribute("cliente", cliente);
-        
+
         sesion = request.getSession();
         sesion.setAttribute("cliente", cliente);
-        
+
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
-    
-    private void logout(HttpServletRequest request, HttpServletResponse response)throws Exception{
-        if(request.getSession().getAttribute("cliente")!=null){
+
+    private void logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getSession().getAttribute("cliente") != null) {
             System.out.println(request.getSession().getAttribute("cliente"));
             request.getSession().removeAttribute("cliente");
             response.sendRedirect("login.jsp");
-        }else{
+        } else {
             response.sendRedirect("index.jsp");
         }
     }
-    
-    private void envia(HttpServletRequest request, HttpServletResponse response)throws Exception{
+
+    private void envia(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String correo = request.getParameter("correo");
         recoverPassword.enviarCorreoRecuperacion(correo);
         request.getRequestDispatcher("RContra.jsp").forward(request, response);
     }
-    
-    private void restablece(HttpServletRequest request, HttpServletResponse response)throws Exception{
+
+    private void restablece(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String clave = request.getParameter("clave");
         String pass = request.getParameter("txtcontrasena");
         recoverPassword.actualizarContrasena(clave, pass);

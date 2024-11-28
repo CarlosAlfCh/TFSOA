@@ -1,7 +1,6 @@
 package com.utp.entidad.info;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 public class DetalleReserva {
 
@@ -39,15 +38,7 @@ public class DetalleReserva {
         this.nnoches = nnoches;
     }
 
-    // Método para calcular el número de noches
-    public int calcularNoches() {
-        if (fechaIngreso != null && fechaSalida != null) {
-            long dias = ChronoUnit.DAYS.between(fechaIngreso, fechaSalida);
-            return (int) (dias == 0 ? 1 : dias); // Si las fechas son iguales, devolver 1
-        }
-        return 1; // Por defecto, si no se proveen fechas, se cuenta como 1 noche
-    }
-
+    
     public int getItem() {
         return item;
     }

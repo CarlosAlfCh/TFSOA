@@ -143,7 +143,7 @@
                             <div class="bg-white py-2 collapse-inner rounded">
                                 <h6 class="collapse-header">Elija opción:</h6>
 
-                                <a class="collapse-item" href="VMAsignar.jsp">Asignar</a>
+                                <a class="collapse-item" href="ServletAsignar?accion=listar">Asignar</a>
                                 <a class="collapse-item" href="VMAsignar.jsp">Horarios</a>
                                 <!--                                <a class="collapse-item" href="VMAsignar.jsp">Historial</a>-->
                             </div>
@@ -173,7 +173,7 @@
 
                                 <a class="collapse-item" href="ServletCitas?menu=listar">Validacion</a>
                                 <!--                                <a class="collapse-item" href="ServletCitas?menu=listar">Historial</a>-->
-                                <a class="collapse-item" href="ServletCitas?menu=listar">Metodos de pago</a>
+                                <a class="collapse-item" href="ServletTarifas?accion=listar">Promociones</a>
                             </div>
                         </div>
                     </li>   
@@ -267,7 +267,7 @@
 
                                 <%
                                     PagoDAO dao = new PagoDAO();
-                                    List<Pago> lista = dao.entrante();
+                                    List<Pago> lista = dao.listarpagos();
                                 %>   
 
                                 <li class="nav-item dropdown no-arrow mx-1">

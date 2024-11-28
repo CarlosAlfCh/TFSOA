@@ -55,6 +55,25 @@ public class CorreoService {
                 + "</html>";
         enviarCorreo(destinatario, asunto, mensajeHTML);
     }
+    
+    public void enviarCorreoPromocional(String destinatario, String codpromo, int descuento, String fechaExpiracion) throws MessagingException {
+    String asunto = "¡Tu Código Promocional de Relax & Wellness!";
+    String mensajeHTML = "<html>"
+            + "<body>"
+            + "<h2 style='color:#2E86C1;'>¡Aprovecha tu Descuento Especial!</h2>"
+            + "<p>Hola,</p>"
+            + "<p>¡Gracias por ser parte de Relax & Wellness! Te hemos otorgado un código promocional para que disfrutes de un descuento especial del " + descuento + "% en nuestros servicios.</p>"
+            + "<div style='background-color:#f0f0f0;padding:10px;border-radius:5px;text-align:center;'>"
+            + "<h3 style='font-size:24px;'>Código: " + codpromo + "</h3>"
+            + "</div>"
+            + "<p style='color:#7f8c8d;'>Este código es válido hasta el " + fechaExpiracion + ".</p>"
+            + "<p>¡No pierdas esta oportunidad de relajarte y revitalizarte con nosotros!</p>"
+            + "<br><p>Gracias,<br>El equipo de Relax & Wellness</p>"
+            + "</body>"
+            + "</html>";
+    
+    enviarCorreo(destinatario, asunto, mensajeHTML);
+}
 
     private void enviarCorreo(String destinatario, String asunto, String mensajeHTML) throws MessagingException {
         Properties props = new Properties();

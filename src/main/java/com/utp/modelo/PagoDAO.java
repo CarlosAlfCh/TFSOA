@@ -50,9 +50,11 @@ public class PagoDAO {
         return r;
     }
 
-    public List<Pago> listar() {
+    public List<Pago> listarpagos() {
         ArrayList<Pago> list = new ArrayList<>();
-        String sql = "SELECT persona.nombres, persona.apelpat, persona.apelmat, persona.correo, pago.id_pago, pago.n_operacion, pago.metodo, pago.fecha_pago, pago.valido FROM persona INNER JOIN reserva ON persona.codigo=reserva.id_cliente INNER JOIN pago ON reserva.id_pago=pago.id_pago;";
+        String sql = "SELECT persona.nombres, persona.apelpat, persona.apelmat, persona.correo, pago.id_pago, "
+                + " pago.n_operacion, pago.metodo, pago.fecha_pago, pago.valido "
+                + " FROM persona INNER JOIN reserva ON persona.codigo=reserva.id_cliente INNER JOIN pago ON reserva.id_pago=pago.id_pago ORDER BY pago.id_pago DESC";
         try {
             conn = cn.conectar();
             ps = conn.prepareStatement(sql);
@@ -75,31 +77,6 @@ public class PagoDAO {
         return list;
     }
 
-    public List<Pago> entrante() {
-        ArrayList<Pago> list = new ArrayList<>();
-        String sql = "select * from pago";
-        try {
-            conn = cn.conectar();
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Pago pay = new Pago();
-                int val;
-                pay.setIdpago(rs.getInt("id_pago"));
-                pay.setCodigo(rs.getString("n_operacion"));
-                pay.setMetodo(rs.getString("metodo"));
-                pay.setFechapago(rs.getString("fecha_pago"));
-                pay.setValido(rs.getInt("valido"));
-                val = rs.getInt("valido");
-                if (val == 0) {
-                    list.add(pay);
-                }
-            }
-        } catch (SQLException e) {
-        }
-        return list;
-    }
-
     public int pagovalido(int idpago) {
         int r = 0;
         String sql = "UPDATE pago SET valido=? WHERE id_pago=" + idpago;
@@ -113,7 +90,6 @@ public class PagoDAO {
         } catch (SQLException e) {
             System.out.println(e.toString());
         }
-        System.out.println("Valido?? " + idpago);
         return r;
     }
 

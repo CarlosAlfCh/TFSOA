@@ -33,10 +33,10 @@
                 <div class="col-lg-4 col-md-12">
                     <div class="logo">
                         <a href="index.jsp">
-                            <c:if test="${cliente.estado == null}"> 
+                            <c:if test="${codpago == null || codpago==0}"> 
                                 <img src="src/img/SPA1.png" alt="Logo">
                             </c:if>
-                            <c:if test="${cliente.estado != null}"> 
+                            <c:if test="${codpago != 0 && codpago!=null}"> 
                                 <img src="src/img/SPA2.png" alt="Logo">
                             </c:if>
                         </a>

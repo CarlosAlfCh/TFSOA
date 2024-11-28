@@ -1,14 +1,6 @@
-<%-- 
-    Document   : VMClientes
-    Created on : 10 jun. 2023, 22:52:03
-    Author     : LENOVO
---%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="com.utp.entidad.Cliente"%>
-<%@page import="com.utp.modelo.ClienteDAO"%>
-<%@page import="java.util.List"%>
+
 <!DOCTYPE html>
 <html>
     <head>

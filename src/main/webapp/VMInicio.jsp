@@ -28,7 +28,7 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Bienvenido ${usuario.getNombres()}</h1>
+                        <h3 class="m-0 font-weight-bold text-primary">Bienvenido ${usuario.getNombres()}</h3>
 
                     <c:if test="${usuario.getRol() != 3}"> 
                     

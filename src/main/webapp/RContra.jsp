@@ -1,9 +1,3 @@
-<%-- 
-    Document   : RContra
-    Created on : 20 jul. 2023, 23:47:13
-    Author     : LENOVO
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
