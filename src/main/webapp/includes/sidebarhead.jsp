@@ -255,7 +255,7 @@
                 <div class="text-center d-none d-md-inline">
                     <button class="rounded-circle border-0" id="sidebarToggle"></button>
                 </div>
-                
+
             </ul>
             <!-- End of Sidebar -->
 
@@ -291,7 +291,20 @@
                                         <i class="fas fa-bell fa-fw"></i>
                                         <% if (lista.size() != 0) {%>
                                         <!-- Counter - Alerts -->
-                                        <span class="badge badge-danger badge-counter"><%= lista.size()%></span>
+                                        <span class="badge badge-danger badge-counter">
+
+                                            <%
+                                                int r = 0;
+                                                for (Pago p : lista) {
+                                                    if (p.getValido() == 0) {
+                                                        r++;
+                                                    }
+                                                }
+                                            %>
+                                            
+                                            <%= r %>
+
+                                        </span>
                                         <% }%>
                                     </a>
 
@@ -309,7 +322,7 @@
 
                                         %>
                                         <a class="dropdown-item d-flex align-items-center" 
-                                           href="ServletCitas?menu=vb&idpago=<%= p.getIdpago()%>" >
+                                           href="ServletCitas?menu=listar" >
 
                                             <div class="mr-3">
                                                 <div class="icon-circle bg-success">
@@ -395,7 +408,18 @@
                                         <i class="fas fa-envelope fa-fw"></i>
 
                                         <!-- Counter - Messages -->
-                                        <span class="badge badge-danger badge-counter"></span>
+                                        <span class="badge badge-danger badge-counter">
+                                            
+                                            <c:set var="iter" value="0" />
+                                            <c:forEach var="a" items="${msj}">
+                                                <c:if test="${a.estado == 0}">
+                                                    <c:set var="iter" value="${iter + 1}" />
+                                                </c:if>
+                                            </c:forEach>
+
+                                            ${iter}
+                                            
+                                        </span>
 
                                     </a>
 
@@ -405,7 +429,7 @@
                                         <h6 class="dropdown-header">
                                             Mensaje
                                         </h6>
-                                        <c:forEach var="a" items="${asig}" varStatus="status">
+                                        <c:forEach var="a" items="${msj}" varStatus="status">
                                             <c:if test="${a.estado == 1}">
 
                                                 <a class="dropdown-item d-flex align-items-center" href="#">
@@ -414,15 +438,15 @@
                                                              alt="...">
                                                     </div>
                                                     <div class="font-weight-bold">
-                                                        <div class="text-truncate">Servicio realizado · Codigo: 000${a.idpago}</div>
-                                                        <div class="small text-gray-500">Mauro Linares</div>
+                                                        <div class="text-truncate">Servicio realizado · Codigo: 000000${a.idpago}</div>
+                                                        <div class="small text-gray-500">Id Tecnico ${a.idtecnico}</div>
                                                     </div>
                                                 </a>
 
                                             </c:if>
                                         </c:forEach>
 
-                                        <a class="dropdown-item text-center small text-gray-500" href="VMAsignar.jsp">Historial</a>
+                                        <a class="dropdown-item text-center small text-gray-500" href="ServletAsignar?accion=listar">Asignaciones</a>
 
                                     </div>
                                 </li>

@@ -125,11 +125,11 @@ public class ServletValida extends HttpServlet {
         if (user.getRol() != 4) {
             // Usuario no cliente
             List listres = reservaDAO.listasign(user.getCodigo());
-            int ms = listres.size();
+            List listmensaje = reservaDAO.listares();
 
             request.getSession().setAttribute("usuario", user);
-            request.getSession().setAttribute("asig", listres);
-            request.getSession().setAttribute("msj", ms);
+            request.setAttribute("asig", listres);
+            request.setAttribute("msj", listmensaje);
 
             request.getRequestDispatcher("ServletInicio?menu=principal&id="+user.getCodigo()).forward(request, response);
         } else {
