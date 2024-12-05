@@ -68,5 +68,6 @@
 
 <!-- Page level custom scripts -->
 <script src="src/js/demo/datatables-demo.js"></script>
+<script src="src/js/datatable-2.js"></script>
 </body>
 </html>

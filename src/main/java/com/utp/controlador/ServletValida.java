@@ -179,6 +179,7 @@ public class ServletValida extends HttpServlet {
             System.out.println(request.getSession().getAttribute("cliente"));
             request.getSession().removeAttribute("cliente");
             request.getSession().removeAttribute("msj");
+            request.getSession().removeAttribute("marca");
             request.getSession().removeAttribute("asig");
             response.sendRedirect("login.jsp");
         } else {

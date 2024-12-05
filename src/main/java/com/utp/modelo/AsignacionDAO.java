@@ -72,12 +72,12 @@ public class AsignacionDAO {
     public List<HashMap<String, Object>> asignacionesTecnico(int idtecnico) {
         List<HashMap<String, Object>> eventos = new ArrayList<>();
         String sql = "SELECT r.id_reserva, r.id_pago, r.f_reserva, r.f_atencion, r.monto, r.estado, "
-                + "c.nombres AS cliente_nombre, c.apelpat AS cliente_apellido, "
-                + "t.nombres AS tecnico_nombre, t.apelpat AS tecnico_apellido "
-                + "FROM reserva r "
-                + "INNER JOIN persona c ON r.id_cliente = c.codigo "
-                + "INNER JOIN persona t ON r.id_tecnico = t.codigo "
-                + "WHERE r.f_atencion IS NOT NULL AND t.codigo = ?";
+                + " c.nombres AS cliente_nombre, c.apelpat AS cliente_apellido, "
+                + " t.nombres AS tecnico_nombre, t.apelpat AS tecnico_apellido "
+                + " FROM reserva r "
+                + " INNER JOIN persona c ON r.id_cliente = c.codigo "
+                + " INNER JOIN persona t ON r.id_tecnico = t.codigo "
+                + " WHERE r.f_atencion IS NOT NULL AND t.codigo = ?";
 
         try {
             conn = cn.conectar();
@@ -92,6 +92,45 @@ public class AsignacionDAO {
                         + " | Técnico: " + rs.getString("tecnico_nombre") + " " + rs.getString("tecnico_apellido"));
                 evento.put("start", rs.getDate("f_atencion").toLocalDate().toString());
                 evento.put("end", rs.getDate("f_atencion").toLocalDate().plusDays(1).toString());
+
+                HashMap<String, Object> extendedProps = new HashMap<>();
+                extendedProps.put("monto", rs.getDouble("monto"));
+                extendedProps.put("estado", rs.getInt("estado"));
+                evento.put("extendedProps", extendedProps);
+
+                eventos.add(evento);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return eventos;
+    }
+
+    public List<HashMap<String, Object>> asignacionesRoom(int idroom) {
+        List<HashMap<String, Object>> eventos = new ArrayList<>();
+        String sql = "SELECT dr.id_reserva, dr.nnoches, dr.f_inicio, dr.f_salida, "
+                + " r.id_pago, r.monto, "
+                + " h.tipo_habita, h.piso, h.estado, "
+                + " c.nombres AS nombre, c.apelpat AS apellido_paterno, c.apelmat AS apellido_materno "
+                + " FROM detalleroom dr "
+                + " INNER JOIN habitacion h ON dr.id_habitacion = h.id_habitacion "
+                + " INNER JOIN reserva r ON dr.id_reserva = r.id_reserva "
+                + " INNER JOIN persona c ON r.id_cliente = c.codigo "
+                + " WHERE h.id_habitacion = ?";
+
+        try {
+            conn = cn.conectar();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idroom);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                HashMap<String, Object> evento = new HashMap<>();
+                evento.put("id", rs.getInt("id_reserva"));
+                evento.put("title", "N° Reserva 000000"+rs.getString("id_pago")+" Cliente: " + rs.getString("nombre") + " " + rs.getString("apellido_paterno") + " " + rs.getString("apellido_materno")
+                +" Habitacion: " + rs.getString("tipo_habita") + " Piso: " +rs.getString("piso"));
+                evento.put("start", rs.getDate("f_inicio").toLocalDate().toString());
+                evento.put("end", rs.getDate("f_salida").toLocalDate().toString());
 
                 HashMap<String, Object> extendedProps = new HashMap<>();
                 extendedProps.put("monto", rs.getDouble("monto"));
@@ -150,7 +189,7 @@ public class AsignacionDAO {
                 }
                 asignacion.setNomTecnico(nomTecnico);
                 asignacion.setIdtecnico(idtecnico);
-                
+
                 list.add(asignacion);
             }
         } catch (SQLException e) {
@@ -158,7 +197,7 @@ public class AsignacionDAO {
         }
         return list;
     }
-    
+
     public int asignarTecnico(int idreserva, int idtecnico) {
         int r = 0;
         String sql = "UPDATE reserva SET id_tecnico=? WHERE id_reserva=?;";
@@ -211,7 +250,7 @@ public class AsignacionDAO {
         }
         return r;
     }
-    
+
     public int desmarcar(int idreserva) {
         int r = 0;
         String sql = "UPDATE reserva SET estado=? WHERE id_reserva=" + idreserva;
@@ -228,10 +267,10 @@ public class AsignacionDAO {
         }
         return r;
     }
-    
+
     public List<DetalleReserva> detalle(int idreserva) {
         ArrayList<DetalleReserva> list = new ArrayList<>();
-        
+
         String sql = "SELECT ds.f_atencion, ds.npersonas, ds.total, "
                 + " s.nom_serv, s.descripcion FROM detalleservicios ds INNER JOIN servicio s "
                 + " ON ds.id_servicio = s.id_servicio WHERE ds.id_reserva = ?;";

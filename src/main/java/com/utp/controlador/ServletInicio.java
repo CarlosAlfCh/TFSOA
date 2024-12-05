@@ -2,6 +2,7 @@ package com.utp.controlador;
 
 import com.google.gson.Gson;
 import com.utp.modelo.AsignacionDAO;
+import com.utp.modelo.AsistenciaDAO;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -15,25 +16,33 @@ import javax.servlet.http.HttpServletResponse;
 public class ServletInicio extends HttpServlet {
 
     AsignacionDAO asigDAO = new AsignacionDAO();
-    
+    AsistenciaDAO asisDAO = new AsistenciaDAO();
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String menu = request.getParameter("menu");
-        
+        String accion = request.getParameter("accion"); // Para identificar la acción específica
+        int id;
         try {
             switch (menu) {
                 case "principal":
-                    int id = Integer.parseInt(request.getParameter("id"));
+                    id = Integer.parseInt(request.getParameter("id"));
+                    if ("verificar".equals(accion)) {
+                        verificarAsistencia(request, id);
+                    } else if ("actualizar".equals(accion)) {
+                        actualizarAsistencia(request, id);
+                    } 
+
+                    // Obtener asignaciones del técnico y enviarlas como JSON
                     List<HashMap<String, Object>> eventos = asigDAO.asignacionesTecnico(id);
-
                     String eventosJson = new Gson().toJson(eventos);
-
                     request.setAttribute("eventosJson", eventosJson);
                     request.getRequestDispatcher("VMInicio.jsp").forward(request, response);
                     break;
             }
-        } catch (Exception e) {
+        } catch (IOException | NumberFormatException | ServletException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error en el procesamiento");
         }
     }
 
@@ -76,4 +85,18 @@ public class ServletInicio extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private void verificarAsistencia(HttpServletRequest request, int id) {
+        int resp = asisDAO.verificarRegistro(id);
+        request.setAttribute("marca", resp);
+    }
+
+    private void actualizarAsistencia(HttpServletRequest request, int id) {
+        int resp = asisDAO.actualizarHoraSalida(id);
+        
+        request.getSession().setAttribute("marca", resp);
+    }
+
+    private void registrarAsistencia(HttpServletRequest request, int id) {
+
+    }
 }

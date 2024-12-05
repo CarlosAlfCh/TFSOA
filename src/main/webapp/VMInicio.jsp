@@ -33,13 +33,27 @@
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h3 class="m-0 font-weight-bold text-primary">Bienvenido ${usuario.getNombres()}</h3>
 
-                <a href="#" class="btn btn-success btn-icon-split">
-                    <span class="icon text-white-50">
-                        <i class="fas fa-clock"></i>
-                    </span>
-                    <span class="text">Marcar asistencia</span>
-                </a>
 
+                <c:if test="${empty marca}">
+                    <!-- Mostrar botón para "Marcar asistencia" si marca es null o 0 -->
+                    <a href="ServletInicio?menu=principal&id=${usuario.getCodigo()}&accion=verificar" class="btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-clock"></i>
+                        </span>
+                        <span class="text">Marcar asistencia</span>
+                    </a>
+                </c:if>
+
+                <c:if test="${marca == 1}">
+                    <!-- Mostrar botón para "Marcar salida" si marca es 1 -->
+                    <a href="ServletInicio?menu=principal&id=${usuario.getCodigo()}&accion=actualizar" class="btn btn-warning btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </span>
+                        <span class="text">Marcar salida</span>
+                    </a>
+                </c:if>
+                    
             </div>
 
             <c:if test="${usuario.getRol() != 3}"> 

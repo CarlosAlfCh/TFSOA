@@ -461,6 +461,7 @@ public class Controlador extends HttpServlet {
             request.getSession().removeAttribute("usuario");
             request.getSession().removeAttribute("asig");
             request.getSession().removeAttribute("msj");
+            request.getSession().removeAttribute("marca");
             response.sendRedirect("login.jsp");
         } else {
             response.sendRedirect("index.jsp");

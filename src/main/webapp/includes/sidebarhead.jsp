@@ -144,8 +144,7 @@
                                 <h6 class="collapse-header">Elija opción:</h6>
 
                                 <a class="collapse-item" href="ServletAsignar?accion=listar">Asignar</a>
-                                <a class="collapse-item" href="VMAsignar.jsp">Horarios</a>
-                                <!--                                <a class="collapse-item" href="VMAsignar.jsp">Historial</a>-->
+                                <a class="collapse-item" href="ServletHorarios?accion=listar">Horarios</a>
                             </div>
                         </div>
                     </li>
@@ -256,14 +255,7 @@
                 <div class="text-center d-none d-md-inline">
                     <button class="rounded-circle border-0" id="sidebarToggle"></button>
                 </div>
-
-                <c:if test="${usuario.getRol() != 3}">
-                    <!-- Sidebar Message -->
-                    <a class="sidebar-card d-none d-lg-flex" href="#">
-                        <img class="sidebar-card-illustration mb-2" src="src/img/spa_icon.png" alt="...">
-                        Nueva Cita
-                    </a>
-                </c:if>
+                
             </ul>
             <!-- End of Sidebar -->
 
