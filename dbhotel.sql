@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-11-2024 a las 21:58:13
+-- Tiempo de generación: 05-12-2024 a las 17:36:29
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.0.28
 
@@ -24,18 +24,79 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `codigos_promocionales`
+-- Estructura de tabla para la tabla `asistencia`
 --
 
-CREATE TABLE `codigos_promocionales` (
+CREATE TABLE `asistencia` (
+  `id` int(11) NOT NULL,
+  `id_tecnico` int(11) NOT NULL,
+  `fecha` date DEFAULT NULL,
+  `hora_ingreso` time DEFAULT NULL,
+  `hora_salida` time DEFAULT NULL,
+  `nhoras` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `asistencia`
+--
+
+INSERT INTO `asistencia` (`id`, `id_tecnico`, `fecha`, `hora_ingreso`, `hora_salida`, `nhoras`) VALUES
+(2, 1, '2024-11-30', '23:53:13', NULL, NULL),
+(3, 1, '2024-12-01', '23:56:42', '23:56:53', 0),
+(4, 1, '2024-12-02', '23:58:29', '23:58:40', 0),
+(5, 1, '2024-12-03', '00:05:37', '00:06:02', 0),
+(6, 1, '2024-12-04', '00:07:49', '00:08:02', 0),
+(7, 1, '2024-12-28', '00:21:35', '00:22:01', 0),
+(8, 1, '2024-12-05', '00:28:20', '00:28:47', 0),
+(9, 4, '2024-12-05', '00:32:05', '00:32:13', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `codigospromo`
+--
+
+CREATE TABLE `codigospromo` (
   `id_promo` int(11) NOT NULL,
   `id_cliente` int(11) NOT NULL,
   `estado` int(11) NOT NULL,
   `fecha_generacion` date NOT NULL,
   `fecha_expiracion` date NOT NULL,
   `fecha_uso` date DEFAULT NULL,
-  `descuento` int(11) NOT NULL
+  `descuento` int(11) NOT NULL,
+  `codpromo` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `codigospromo`
+--
+
+INSERT INTO `codigospromo` (`id_promo`, `id_cliente`, `estado`, `fecha_generacion`, `fecha_expiracion`, `fecha_uso`, `descuento`, `codpromo`) VALUES
+(13, 19, 0, '2024-11-22', '2024-11-29', '2024-11-22', 50, 'VAN4VE');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `comentarios`
+--
+
+CREATE TABLE `comentarios` (
+  `id` int(11) NOT NULL,
+  `id_persona` int(11) NOT NULL,
+  `comentario` varchar(400) NOT NULL,
+  `nestrellas` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `comentarios`
+--
+
+INSERT INTO `comentarios` (`id`, `id_persona`, `comentario`, `nestrellas`) VALUES
+(1, 19, 'esto es una prueba', 4),
+(2, 19, 'A mi primo de salio un hacker, etiqueten a Aquiles Castro', 2),
+(4, 19, 'Excelente servicio, volvere con grandes espectativas', 5),
+(5, 19, 'Muy bueno en verdad :P', 4),
+(6, 19, 'ChatGPT=zzz, No leo lloros :P', 1);
 
 -- --------------------------------------------------------
 
@@ -60,7 +121,14 @@ CREATE TABLE `detalleroom` (
 
 INSERT INTO `detalleroom` (`id_detalle`, `id_reserva`, `id_habitacion`, `f_inicio`, `f_salida`, `nnoches`, `subtotal`, `total`) VALUES
 (6, 18, 2, '2024-11-18', '2024-11-22', 4, 250, 1000),
-(7, 20, 3, '2024-11-17', '2024-11-19', 2, 80, 160);
+(7, 20, 3, '2024-11-17', '2024-11-19', 2, 80, 160),
+(8, 22, 1, '2024-11-17', '2024-11-18', 1, 120, 120),
+(9, 24, 2, '2024-11-20', '2024-11-30', 10, 250, 2500),
+(10, 28, 1, '2024-11-20', '2024-11-22', 2, 120, 240),
+(11, 30, 2, '2024-11-21', '2024-11-23', 2, 250, 500),
+(12, 31, 4, '2024-11-21', '2024-11-26', 5, 400, 2000),
+(13, 32, 4, '2024-11-20', '2024-11-22', 2, 400, 800),
+(14, 33, 4, '2024-11-27', '2024-11-29', 2, 400, 800);
 
 -- --------------------------------------------------------
 
@@ -87,7 +155,21 @@ INSERT INTO `detalleservicios` (`id_detalle`, `id_reserva`, `id_servicio`, `f_at
 (17, 19, 2, '2024-11-21', 2, 40, 80),
 (18, 19, 3, '2024-11-21', 2, 35, 70),
 (19, 20, 1, '2024-11-25', 1, 50, 50),
-(20, 20, 2, '2024-11-25', 1, 40, 40);
+(20, 20, 2, '2024-11-25', 1, 40, 40),
+(21, 21, 1, '2024-11-30', 2, 50, 100),
+(22, 23, 3, '2024-11-19', 1, 35, 35),
+(23, 24, 2, '2024-11-30', 1, 40, 40),
+(24, 25, 1, '2024-11-12', 1, 50, 50),
+(25, 25, 2, '2024-11-12', 1, 40, 40),
+(26, 26, 2, '2024-11-17', 1, 40, 40),
+(27, 27, 2, '2024-11-27', 1, 40, 40),
+(28, 28, 1, '2024-11-21', 2, 50, 100),
+(29, 29, 1, '2024-11-21', 1, 50, 50),
+(30, 29, 3, '2024-11-21', 1, 35, 35),
+(31, 31, 1, '2024-11-21', 2, 50, 100),
+(32, 31, 3, '2024-11-21', 2, 35, 70),
+(33, 32, 1, '2024-11-21', 4, 50, 200),
+(34, 33, 1, '2024-11-24', 1, 50, 50);
 
 -- --------------------------------------------------------
 
@@ -143,22 +225,26 @@ INSERT INTO `distrito` (`id_distrito`, `nombre`) VALUES
 
 CREATE TABLE `especialidad` (
   `idespecialidad` int(11) NOT NULL,
-  `nombre` varchar(50) NOT NULL
+  `nombre` varchar(50) NOT NULL,
+  `descripcion` varchar(300) DEFAULT NULL,
+  `salario_promedio` double DEFAULT NULL,
+  `f_actualizacion` date DEFAULT NULL,
+  `estado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `especialidad`
 --
 
-INSERT INTO `especialidad` (`idespecialidad`, `nombre`) VALUES
-(1, 'S/C'),
-(2, 'Masajista'),
-(3, 'Manicurista'),
-(4, 'Pedicurista'),
-(5, 'Cosmetólogo'),
-(6, 'Terapeuta de Spa'),
-(7, 'Instructor de Fitness'),
-(8, 'Nutricionista');
+INSERT INTO `especialidad` (`idespecialidad`, `nombre`, `descripcion`, `salario_promedio`, `f_actualizacion`, `estado`) VALUES
+(1, 'S/C', 'Sin categoria', 0, '2024-12-04', 1),
+(2, 'Masajista', 'a', 1, '2024-12-03', 1),
+(3, 'Manicurista', 'a', 1, '2024-12-03', 1),
+(4, 'Pedicurista', 'abc', 1200, '2024-12-04', 1),
+(5, 'Cosmetólogo', 'a', 1, '2024-12-01', 1),
+(6, 'Terapeuta de Spa', 'a', 1, '2024-12-01', 0),
+(7, 'Instructor de Fitness', 'a', 1, '2024-12-04', 1),
+(8, 'Nutricionista', 'abc', 1, '2024-12-04', 0);
 
 -- --------------------------------------------------------
 
@@ -183,25 +269,12 @@ CREATE TABLE `habitacion` (
 --
 
 INSERT INTO `habitacion` (`id_habitacion`, `piso`, `tipo_habita`, `descripcion`, `foto_habitacion`, `precioxnoche`, `direccion`, `id_distrito`, `estado`) VALUES
-(1, '2', 'Doble', 'Vista a la chilina', NULL, 120, 'Calle Los Olivos 123', 1, 2),
+(1, '2', 'Doble', 'Vista a la chilina', NULL, 120, 'Calle Los Olivos 123', 1, 1),
 (2, '3', 'Suite', 'Jacuzzi y vista panorámica', NULL, 250, 'Av. Principal 456', 2, 1),
 (3, '1', 'Individual', 'Individual privado', NULL, 80, 'Calle La Luna 789', 3, 2),
 (4, '4', 'Suite', 'Terraza y piscina privada', NULL, 400, 'Av. Maravillas 321', 4, 3),
 (5, '2', 'Doble', 'Vista al Misti', NULL, 150, 'Calle Las Flores 101', 5, 1),
 (6, '3', 'Matrimonial', 'Piscina', NULL, 120, 'Av. Aeropajita', 1, 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `horario`
---
-
-CREATE TABLE `horario` (
-  `id_horario` int(11) NOT NULL,
-  `id_habitacion` int(11) NOT NULL,
-  `id_reserva` int(11) NOT NULL,
-  `estado` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -222,9 +295,22 @@ CREATE TABLE `pago` (
 --
 
 INSERT INTO `pago` (`id_pago`, `n_operacion`, `fecha_pago`, `metodo`, `valido`) VALUES
-(39, '18587', '12/11/2024', 'Yape', 0),
-(40, '35851', '12/11/2024', 'Yape', 0),
-(41, '49478', '12/11/2024', 'Plin', 0);
+(39, '18587', '12/11/2024', 'Yape', 1),
+(40, '35851', '12/11/2024', 'Yape', 1),
+(41, '49478', '12/11/2024', 'Plin', 1),
+(42, '809984', '14/11/2024', 'Yape', 1),
+(43, '414307', '15/11/2024', 'Yape', 1),
+(44, '830017', '15/11/2024', 'Yape', 1),
+(45, '765788', '15/11/2024', 'Yape', 1),
+(46, '273011', '15/11/2024', 'Yape', 1),
+(47, '557170', '15/11/2024', 'Plin', 1),
+(48, '677117', '15/11/2024', 'Yape', 1),
+(49, '545578', '18/11/2024', 'Yape', 1),
+(50, '123456', '19/11/2024', 'Yape', 1),
+(51, '234555', '19/11/2024', 'Yape', 1),
+(52, '529120', '19/11/2024', 'Yape', 1),
+(53, '781373', '19/11/2024', 'Yape', 1),
+(54, '1234', '22/11/2024', 'Yape', 0);
 
 -- --------------------------------------------------------
 
@@ -244,7 +330,7 @@ CREATE TABLE `persona` (
   `estado` int(11) NOT NULL,
   `idrol` int(11) NOT NULL,
   `idespecialidad` int(11) DEFAULT NULL,
-  `direccion` varchar(50) DEFAULT NULL,
+  `direccion` varchar(300) DEFAULT NULL,
   `id_distrito` int(11) NOT NULL,
   `turno` varchar(40) DEFAULT NULL,
   `foto` blob DEFAULT NULL,
@@ -256,17 +342,17 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`codigo`, `nombres`, `apelpat`, `apelmat`, `dni`, `correo`, `telefono`, `contrasena`, `estado`, `idrol`, `idespecialidad`, `direccion`, `id_distrito`, `turno`, `foto`, `recuperar`) VALUES
-(1, 'Carlos Alfred', 'Choquehuanca', 'Chuctaya', '71650006', 'che.carlos.aqp@gmail.com', '999999999', '1', 1, 1, 1, 'Av. Aquiles Castro', 3, 'MaÃ±ana', NULL, '52894'),
+(1, 'Carlos Alfredo', 'Choquehuanca', 'Chuctaya', '71650006', 'che.carlos.aqp@gmail.com', '999999999', '1', 1, 1, 1, 'Av. Aquiles Castro', 3, 'MaÃ±ana', NULL, '81327'),
 (3, 'Josh', 'Volgen', 'Dumkof', '12345678', 'jolgendum@gmail.com', '123456789', '12', 1, 2, 2, 'Asoc. Aeropajita', 4, 'Mañana', NULL, NULL),
 (4, 'Pedro', 'Suarez', 'Vertiz', '12345678', 'pedro@gmail.com', '123456789', '12', 1, 3, 7, 'Asoc. Aeropajita', 4, 'Tarde', NULL, NULL),
 (6, 'Lola', 'Chuctaya', 'Colca', '1234567', 'lola.aqp@gmail.com', '123456789', '12', 1, 4, 2, 'Asoc. Las Malvinas', 1, NULL, NULL, NULL),
 (7, 'Alexander', 'Romanov', 'Perez', '12345678', 'alexan@gmail.com', '123456789', '12345678', 1, 4, 2, 'Av. Delfin', 1, NULL, NULL, NULL),
-(8, 'Angel', 'Valdivia', 'Mendoza', '1234567', 'a@gmail.com', '123', '1234567', 1, 3, 2, '123 av', 1, 'Mañana', NULL, NULL),
-(9, 'Andrew', 'Alvarez', 'Murillo', '123456', 'andrew@gmail.com', '123', '123456', 1, 2, 2, 'Av. La paz', 2, 'Tarde', NULL, NULL),
+(8, 'Angelo', 'Gomez', 'Sanchez', '123', 'sam@gmail.com', '12', '1', 0, 3, 2, 'aaaaaa', 15, 'tarde', NULL, NULL),
 (10, 'Benito', 'Villa', 'Buena', '123', 'bbenito@gmail.com', '12345', 'ben', 1, 2, 2, 'Av. Jesus', 1, 'Tarde', NULL, NULL),
 (11, 'Claude', 'Anatoli', 'Vegas', '12345', 'claudeia@gmail.com', '12345', '12', 1, 3, 2, 'Av. IArtifi', 3, 'Tarde', NULL, NULL),
 (12, 'Isac', 'Ventura', 'Marcos', '12345678', 'isa@gmail.com', '1234', '123', 1, 4, 1, 'Av. Prueba ', 1, NULL, NULL, NULL),
-(14, 'Max', 'Stell', 'Smith', '123', 'max@gmail.com', '12345', '123', 1, 3, 2, 'Av. Terminator', 2, 'Noche', NULL, NULL);
+(14, 'Max', 'Stell', 'Smith', '123', 'max@gmail.com', '12345', '123', 1, 3, 2, 'Av. Terminator', 2, 'Noche', NULL, NULL),
+(19, 'Alfred', 'Choquehuanca', 'Chuctaya', '1234567', 'alfredche8915@gmail.com', '1234', '123', 1, 4, NULL, 'av.la', 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -292,9 +378,22 @@ CREATE TABLE `reserva` (
 --
 
 INSERT INTO `reserva` (`id_reserva`, `f_reserva`, `estado`, `f_atencion`, `f_check_in`, `f_check_out`, `id_cliente`, `id_pago`, `id_tecnico`, `monto`) VALUES
-(18, '12/11/2024', 0, NULL, '2024-11-18', '2024-11-22', 6, 39, NULL, 1000),
-(19, '12/11/2024', 0, '2024-11-21', NULL, NULL, 6, 40, NULL, 200),
-(20, '12/11/2024', 0, '2024-11-25', '2024-11-17', '2024-11-19', 6, 41, NULL, 250);
+(18, '12/11/2024', 0, NULL, '2024-11-18', '2024-11-22', 6, 39, 11, 1000),
+(19, '12/11/2024', 1, '2024-11-21', '2024-11-01', '2024-11-19', 6, 40, 4, 200),
+(20, '12/11/2024', 0, '2024-11-25', '2024-11-17', '2024-11-19', 6, 41, 4, 250),
+(21, '14/11/2024', 0, '2024-11-30', '2024-11-01', '2024-11-06', 19, 42, 4, 50),
+(22, '15/11/2024', 1, NULL, '2024-11-17', '2024-11-18', 19, 43, 11, 120),
+(23, '15/11/2024', 0, '2024-11-19', NULL, NULL, 19, 44, 4, 35),
+(24, '15/11/2024', 0, '2024-11-30', '2024-11-20', '2024-11-30', 19, 45, 4, 2540),
+(25, '15/11/2024', 0, '2024-11-12', NULL, NULL, 19, 46, 4, 45),
+(26, '15/11/2024', 0, '2024-11-17', NULL, NULL, 19, 47, 4, 40),
+(27, '15/11/2024', 0, '2024-11-27', NULL, NULL, 19, 48, 8, 40),
+(28, '18/11/2024', 1, '2024-11-21', '2024-11-20', '2024-11-22', 19, 49, 8, 170),
+(29, '19/11/2024', 0, '2024-11-21', NULL, NULL, 19, 50, 11, 85),
+(30, '19/11/2024', 0, NULL, '2024-11-21', '2024-11-23', 19, 51, NULL, 500),
+(31, '19/11/2024', 0, '2024-11-21', '2024-11-21', '2024-11-26', 19, 52, 4, 2170),
+(32, '19/11/2024', 1, '2024-11-21', '2024-11-20', '2024-11-22', 19, 53, 4, 750),
+(33, '22/11/2024', 1, '2024-11-24', '2024-11-27', '2024-11-29', 19, 54, NULL, 425);
 
 -- --------------------------------------------------------
 
@@ -379,11 +478,25 @@ INSERT INTO `tiposervicio` (`id_tipo`, `nombre`) VALUES
 --
 
 --
--- Indices de la tabla `codigos_promocionales`
+-- Indices de la tabla `asistencia`
 --
-ALTER TABLE `codigos_promocionales`
+ALTER TABLE `asistencia`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_tecnico` (`id_tecnico`);
+
+--
+-- Indices de la tabla `codigospromo`
+--
+ALTER TABLE `codigospromo`
   ADD PRIMARY KEY (`id_promo`),
   ADD KEY `id_cliente` (`id_cliente`);
+
+--
+-- Indices de la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_persona` (`id_persona`);
 
 --
 -- Indices de la tabla `detalleroom`
@@ -419,14 +532,6 @@ ALTER TABLE `especialidad`
 ALTER TABLE `habitacion`
   ADD PRIMARY KEY (`id_habitacion`),
   ADD KEY `id_distrito` (`id_distrito`);
-
---
--- Indices de la tabla `horario`
---
-ALTER TABLE `horario`
-  ADD PRIMARY KEY (`id_horario`),
-  ADD KEY `id_habitacion` (`id_habitacion`),
-  ADD KEY `id_reserva` (`id_reserva`);
 
 --
 -- Indices de la tabla `pago`
@@ -477,22 +582,34 @@ ALTER TABLE `tiposervicio`
 --
 
 --
--- AUTO_INCREMENT de la tabla `codigos_promocionales`
+-- AUTO_INCREMENT de la tabla `asistencia`
 --
-ALTER TABLE `codigos_promocionales`
-  MODIFY `id_promo` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `asistencia`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT de la tabla `codigospromo`
+--
+ALTER TABLE `codigospromo`
+  MODIFY `id_promo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT de la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `detalleroom`
 --
 ALTER TABLE `detalleroom`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `detalleservicios`
 --
 ALTER TABLE `detalleservicios`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT de la tabla `distrito`
@@ -504,37 +621,31 @@ ALTER TABLE `distrito`
 -- AUTO_INCREMENT de la tabla `especialidad`
 --
 ALTER TABLE `especialidad`
-  MODIFY `idespecialidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idespecialidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `habitacion`
 --
 ALTER TABLE `habitacion`
-  MODIFY `id_habitacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT de la tabla `horario`
---
-ALTER TABLE `horario`
-  MODIFY `id_horario` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_habitacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `pago`
 --
 ALTER TABLE `pago`
-  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `reserva`
 --
 ALTER TABLE `reserva`
-  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -559,10 +670,22 @@ ALTER TABLE `tiposervicio`
 --
 
 --
--- Filtros para la tabla `codigos_promocionales`
+-- Filtros para la tabla `asistencia`
 --
-ALTER TABLE `codigos_promocionales`
-  ADD CONSTRAINT `codigos_promocionales_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `persona` (`codigo`) ON DELETE CASCADE;
+ALTER TABLE `asistencia`
+  ADD CONSTRAINT `asistencia_ibfk_1` FOREIGN KEY (`id_tecnico`) REFERENCES `persona` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `codigospromo`
+--
+ALTER TABLE `codigospromo`
+  ADD CONSTRAINT `codigospromo_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `persona` (`codigo`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD CONSTRAINT `comentarios_ibfk_1` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `detalleroom`
@@ -585,13 +708,6 @@ ALTER TABLE `habitacion`
   ADD CONSTRAINT `habitacion_ibfk_1` FOREIGN KEY (`id_distrito`) REFERENCES `distrito` (`id_distrito`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `horario`
---
-ALTER TABLE `horario`
-  ADD CONSTRAINT `horario_ibfk_1` FOREIGN KEY (`id_habitacion`) REFERENCES `habitacion` (`id_habitacion`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `horario_ibfk_2` FOREIGN KEY (`id_reserva`) REFERENCES `reserva` (`id_reserva`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Filtros para la tabla `persona`
 --
 ALTER TABLE `persona`
@@ -604,8 +720,7 @@ ALTER TABLE `persona`
 --
 ALTER TABLE `reserva`
   ADD CONSTRAINT `reserva_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `persona` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`id_pago`) REFERENCES `pago` (`id_pago`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `reserva_ibfk_3` FOREIGN KEY (`id_tecnico`) REFERENCES `persona` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`id_pago`) REFERENCES `pago` (`id_pago`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `servicio`
