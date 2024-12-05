@@ -21,7 +21,7 @@
 
 
 
-                <!-- inicio Agregar Cliente -->
+                <!-- inicio Agregar Room -->
 
                 <div class="card border-left-success shadow h-100 py-2 card shadow mb-4">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collap"
@@ -80,7 +80,7 @@
                                     </tr>
 
                                 </table>
-                                
+
                                 <table class="table table-light"  width="100%" cellspacing="0">
                                     <tr>
                                         <td>
@@ -104,7 +104,7 @@
 
                 </div> 
 
-                <!-- /fin agragar cliente -->  
+                <!-- /fin agragar Room -->  
 
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
@@ -135,18 +135,18 @@
                                                 <button type="button"
                                                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                                         aria-expanded="false" 
-                                                    <c:if test="${r.estado == 1}">                        
-                                                        class="btn btn-success dropdown-toggle">
-                                                        Disponible &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    </c:if>
-                                                    <c:if test="${r.estado == 2}"> 
-                                                        class="btn btn-warning dropdown-toggle" >
-                                                        Mantenimiento &nbsp;
-                                                    </c:if>
-                                                    <c:if test="${r.estado == 3}">
-                                                        class="btn btn-secondary dropdown-toggle">
-                                                        Ocupado &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    </c:if>
+                                                        <c:if test="${r.estado == 1}">                        
+                                                            class="btn btn-success dropdown-toggle">
+                                                            Disponible &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        </c:if>
+                                                        <c:if test="${r.estado == 2}"> 
+                                                            class="btn btn-warning dropdown-toggle" >
+                                                            Mantenimiento &nbsp;
+                                                        </c:if>
+                                                        <c:if test="${r.estado == 3}">
+                                                            class="btn btn-secondary dropdown-toggle">
+                                                            Ocupado &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        </c:if>
                                                 </button>
                                                 <div class="dropdown-menu animated--fade-in"
                                                      aria-labelledby="dropdownMenuButton">
@@ -157,15 +157,43 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <a href="Controlador?menu=room&accion=seleciona&ser=${r.idhabitacion}" class="btn btn-warning btn-icon-split btn-sm">
-                                                <span class="icon text-white-50">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </span>
-                                                <span class="text">Modificar</span>
+                                            <a href="Controlador?menu=room&accion=seleciona&ser=${r.idhabitacion}" class="btn btn-warning btn-circle">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+
+                                            <a class="btn btn-danger btn-circle" data-toggle="modal" data-target="#modal${r.idhabitacion}">
+                                                <i class="fas fa-trash"></i>
                                             </a>
                                         </td>
                                     </tr>
-                                </c:forEach>
+
+                                    <!-- Modal para eliminar servicios -->
+                                <div class="modal fade" id="modal${r.idhabitacion}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">¿Eliminar habitación?</h5>
+                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <div class="card-header">
+                                                    <label style="color: #4c3d3d">Se procedera a eliminar de manera permanente la habitación: ${r.tipo}</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="card-footer">
+                                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                                                <a class="btn btn-success" href="Controlador?menu=room&accion=eliminar&delete=${r.idhabitacion}">Eliminar</a>
+                                            </div>  
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </c:forEach>
                             </tbody>
                         </table>
                     </div>

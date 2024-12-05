@@ -65,7 +65,7 @@
 
                 <!-- Nav Item - Dashboard -->
                 <li class="nav-item active">
-                    <a class="nav-link" href="VMInicio.jsp">
+                    <a class="nav-link" href="ServletInicio?menu=principal&id=${usuario.getCodigo()}">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
                         <span>Inicio</span></a>
                 </li>
@@ -196,6 +196,29 @@
                                 </div>
                             </div>
                         </li>
+
+                        <hr class="sidebar-divider">
+
+                        <div class="sidebar-heading">
+                            Otras Funciones
+                        </div>
+                        <!-- Enlaces para Gestion (Extras) -->
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseExtra"
+                               aria-expanded="true" aria-controls="collapsePages">
+                                <i class="fas fa-fw fa-folder"></i>
+                                <span>Otros</span>
+                            </a>
+                            <div id="collapseExtra" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <h6 class="collapse-header">Gestiones:</h6>
+                                    <a class="collapse-item" href="ServletExtras?menu=especialidad&accion=listar">Especialidad</a>
+                                    <h6 class="collapse-header">Control:</h6>
+                                    <a class="collapse-item" href="ServletExtras?menu=comentarios&accion=listar">Comentarios</a>
+                                </div>
+                            </div>
+                        </li>
+
                     </c:if>
 
                 </c:if>                    
@@ -209,7 +232,7 @@
 
                     <!-- Nav Item - Charts -->
                     <li class="nav-item">
-                        <a class="nav-link" href="ServletCitas?menu=asigna&accion=ver&idtecnic=${usuario.getCodigo()}">
+                        <a class="nav-link" href="ServletTecnico?accion=listar&id=${usuario.getCodigo()}">
                             <i class="fas fa-fw fa-calendar-week"></i>
                             <span>Asignaciones</span>
                         </a>
@@ -217,9 +240,9 @@
 
                     <!-- Nav Item - Charts -->
                     <li class="nav-item">
-                        <a class="nav-link" href="ServletCitas?menu=asigna&accion=ver&idtecnic=${usuario.getCodigo()}">
+                        <a class="nav-link" href="ServletTecnico?accion=historial&id=${usuario.getCodigo()}">
                             <i class="fas fa-fw fa-calendar-week"></i>
-                            <span>Horarios</span>
+                            <span>Historial</span>
                         </a>
                     </li>
 
@@ -274,7 +297,7 @@
                                     <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-bell fa-fw"></i>
-                                        <% if(lista.size()!=0){%>
+                                        <% if (lista.size() != 0) {%>
                                         <!-- Counter - Alerts -->
                                         <span class="badge badge-danger badge-counter"><%= lista.size()%></span>
                                         <% }%>
@@ -293,23 +316,23 @@
                                                     if (p.getValido() == 0) {
 
                                         %>
-                                                        <a class="dropdown-item d-flex align-items-center" 
-                                                           href="ServletCitas?menu=vb&idpago=<%= p.getIdpago()%>" >
-                                                            
-                                                            <div class="mr-3">
-                                                                <div class="icon-circle bg-success">
-                                                                    <i class="fas fa-donate text-white"></i>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div>
-                                                                <div class="small text-gray-500"><%= p.getFechapago()%></div>
-                                                                Pago por: <%= p.getMetodo()%><br>
-                                                                N° de operacion: <%= p.getCodigo()%><br>
-                                                                Codigo: 00000<%= p.getIdpago()%>
-                                                            </div>
-                                                            
-                                                        </a>
+                                        <a class="dropdown-item d-flex align-items-center" 
+                                           href="ServletCitas?menu=vb&idpago=<%= p.getIdpago()%>" >
+
+                                            <div class="mr-3">
+                                                <div class="icon-circle bg-success">
+                                                    <i class="fas fa-donate text-white"></i>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <div class="small text-gray-500"><%= p.getFechapago()%></div>
+                                                Pago por: <%= p.getMetodo()%><br>
+                                                N° de operacion: <%= p.getCodigo()%><br>
+                                                Codigo: 00000<%= p.getIdpago()%>
+                                            </div>
+
+                                        </a>
                                         <%          }
                                                 }
                                             }
@@ -329,7 +352,16 @@
                                         <i class="fas fa-envelope fa-fw"></i>
 
                                         <!-- Counter - Messages -->
-                                        <span class="badge badge-danger badge-counter">${msj}</span>
+                                        <span class="badge badge-danger badge-counter">
+                                            <c:set var="count" value="0" />
+                                            <c:forEach var="a" items="${asig}">
+                                                <c:if test="${a.estado == 1}">
+                                                    <c:set var="count" value="${count + 1}" />
+                                                </c:if>
+                                            </c:forEach>
+
+                                            ${count}
+                                        </span>
 
                                     </a>
 
@@ -341,19 +373,7 @@
                                         </h6>
 
                                         <c:forEach var="a" items="${asig}" varStatus="status">
-                                            <c:if test="${a.estado == 0}">
-
-                                                <div class="dropdown-item d-flex align-items-center">
-                                                    <div class="dropdown-list-image mr-3">
-                                                        <img class="rounded-circle" src="src/img/login.jpg"
-                                                             alt="...">
-                                                        <div class="status-indicator bg-success"></div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-truncate"><i class="fas fa-envelope-open fa-fw"></i> Nueva asignacion !!</div>
-                                                        <div class="small text-gray-500"> · </div>
-                                                    </div>
-                                                </div>
+                                            <c:if test="${a.estado == 1}">
 
                                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                                     <div class="dropdown-list-image mr-3">

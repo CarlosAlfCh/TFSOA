@@ -1,12 +1,15 @@
 package com.utp.modelo;
 
 import com.utp.entidad.info.Asignacion;
+import com.utp.entidad.info.DetalleReserva;
 import com.utp.util.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AsignacionDAO {
@@ -19,8 +22,7 @@ public class AsignacionDAO {
     public List<Asignacion> listasignacion() {
         ArrayList<Asignacion> list = new ArrayList<>();
         String sql = "SELECT r.id_reserva, r.id_pago, r.f_reserva, r.f_atencion, r.monto, r.estado, "
-                + " c.nombres AS nombre_cliente, c.apelpat AS apellido_paterno_cliente, c.apelmat AS apellido_materno_cliente, "
-                + " t.nombres AS nombre_tecnico, t.apelpat AS apellido_paterno_tecnico, t.apelmat AS apellido_materno_tecnico "
+                + " c.nombres, c.apelpat, c.apelmat, t.nombres, t.apelpat, t.apelmat "
                 + " FROM reserva r "
                 + " INNER JOIN persona c ON r.id_cliente = c.codigo "
                 + " LEFT JOIN persona t ON r.id_tecnico = t.codigo "
@@ -40,21 +42,22 @@ public class AsignacionDAO {
                 asignacion.setFechaServicio(rs.getDate("f_atencion").toLocalDate());
                 asignacion.setMonto(rs.getDouble("monto"));
                 asignacion.setEstado(rs.getInt("estado"));
-                // Concatenar nombre y apellidos para cliente.
-                asignacion.setNomCliente(rs.getString("nombre_cliente") + " "
-                        + rs.getString("apellido_paterno_cliente") + " "
-                        + rs.getString("apellido_materno_cliente"));
 
-                // Concatenar nombre y apellidos para técnico.
-                String nomTecnico = (rs.getString("nombre_tecnico") != null ? rs.getString("nombre_tecnico") : "") + " "
-                        + (rs.getString("apellido_paterno_tecnico") != null ? rs.getString("apellido_paterno_tecnico") : "") + " "
-                        + (rs.getString("apellido_materno_tecnico") != null ? rs.getString("apellido_materno_tecnico") : "");
+                // Concatenar nombre completo del cliente
+                String nomCliente = rs.getString("c.nombres") + " "
+                        + rs.getString("c.apelpat") + " "
+                        + rs.getString("c.apelmat");
+                asignacion.setNomCliente(nomCliente);
 
-// Si no se tiene ningún nombre o apellido, establecer "No asignado"
+                // Concatenar nombre completo del técnico
+                String nomTecnico = (rs.getString("t.nombres") != null ? rs.getString("t.nombres") : "") + " "
+                        + (rs.getString("t.apelpat") != null ? rs.getString("t.apelpat") : "") + " "
+                        + (rs.getString("t.apelmat") != null ? rs.getString("t.apelmat") : "");
+
+                // Si no hay información del técnico, asignar "No asignado"
                 if (nomTecnico.trim().isEmpty()) {
                     nomTecnico = "No asignado";
                 }
-
                 asignacion.setNomTecnico(nomTecnico);
 
                 list.add(asignacion);
@@ -66,12 +69,49 @@ public class AsignacionDAO {
         return list;
     }
 
-    public List<Asignacion> asignacionesTecnico(int idtecnico) {
+    public List<HashMap<String, Object>> asignacionesTecnico(int idtecnico) {
+        List<HashMap<String, Object>> eventos = new ArrayList<>();
+        String sql = "SELECT r.id_reserva, r.id_pago, r.f_reserva, r.f_atencion, r.monto, r.estado, "
+                + "c.nombres AS cliente_nombre, c.apelpat AS cliente_apellido, "
+                + "t.nombres AS tecnico_nombre, t.apelpat AS tecnico_apellido "
+                + "FROM reserva r "
+                + "INNER JOIN persona c ON r.id_cliente = c.codigo "
+                + "INNER JOIN persona t ON r.id_tecnico = t.codigo "
+                + "WHERE r.f_atencion IS NOT NULL AND t.codigo = ?";
+
+        try {
+            conn = cn.conectar();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idtecnico);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                HashMap<String, Object> evento = new HashMap<>();
+                evento.put("id", rs.getInt("id_reserva"));
+                evento.put("title", "Cliente: " + rs.getString("cliente_nombre") + " " + rs.getString("cliente_apellido")
+                        + " | Técnico: " + rs.getString("tecnico_nombre") + " " + rs.getString("tecnico_apellido"));
+                evento.put("start", rs.getDate("f_atencion").toLocalDate().toString());
+                evento.put("end", rs.getDate("f_atencion").toLocalDate().plusDays(1).toString());
+
+                HashMap<String, Object> extendedProps = new HashMap<>();
+                extendedProps.put("monto", rs.getDouble("monto"));
+                extendedProps.put("estado", rs.getInt("estado"));
+                evento.put("extendedProps", extendedProps);
+
+                eventos.add(evento);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return eventos;
+    }
+
+    public List<Asignacion> listaAsignada(int idtecnico) {
 
         ArrayList<Asignacion> list = new ArrayList<>();
         String sql = "SELECT r.id_reserva, r.id_pago, r.f_reserva, r.f_atencion, r.monto, r.estado, "
-                + " c.nombres AS nombre_cliente, c.apelpat AS apellido_cliente, c.apelmat AS apellido_cliente, "
-                + " t.nombres AS nombre_tecnico, t.apelpat AS apellido_tecnico, t.apelmat AS apellido_tecnico "
+                + " c.nombres, c.apelpat, c.apelmat, "
+                + " t.nombres, t.apelpat, t.apelmat, t.codigo "
                 + " FROM reserva r "
                 + " INNER JOIN persona c ON r.id_cliente = c.codigo "
                 + " INNER JOIN persona t ON r.id_tecnico = t.codigo "
@@ -93,16 +133,24 @@ public class AsignacionDAO {
                 asignacion.setMonto(rs.getDouble("monto"));
                 asignacion.setEstado(rs.getInt("estado"));
 
-                // Concatenar nombre y apellidos para cliente.
-                asignacion.setNomCliente(rs.getString("nombre_cliente") + " "
-                        + rs.getString("apellido_cliente") + " "
-                        + rs.getString("apellido_cliente"));
+                // Concatenar nombre completo del cliente
+                String nomCliente = rs.getString("c.nombres") + " "
+                        + rs.getString("c.apelpat") + " "
+                        + rs.getString("c.apelmat");
+                asignacion.setNomCliente(nomCliente);
 
-                // Concatenar nombre y apellidos para técnico.
-                asignacion.setNomTecnico(rs.getString("nombre_tecnico") + " "
-                        + rs.getString("apellido_tecnico") + " "
-                        + rs.getString("apellido_tecnico"));
+                // Concatenar nombre completo del técnico
+                String nomTecnico = (rs.getString("t.nombres") != null ? rs.getString("t.nombres") : "") + " "
+                        + (rs.getString("t.apelpat") != null ? rs.getString("t.apelpat") : "") + " "
+                        + (rs.getString("t.apelmat") != null ? rs.getString("t.apelmat") : "");
 
+                // Si no hay información del técnico, asignar "No asignado"
+                if (nomTecnico.trim().isEmpty()) {
+                    nomTecnico = "No asignado";
+                }
+                asignacion.setNomTecnico(nomTecnico);
+                asignacion.setIdtecnico(idtecnico);
+                
                 list.add(asignacion);
             }
         } catch (SQLException e) {
@@ -110,7 +158,7 @@ public class AsignacionDAO {
         }
         return list;
     }
-
+    
     public int asignarTecnico(int idreserva, int idtecnico) {
         int r = 0;
         String sql = "UPDATE reserva SET id_tecnico=? WHERE id_reserva=?;";
@@ -162,6 +210,50 @@ public class AsignacionDAO {
             System.out.println(e);
         }
         return r;
+    }
+    
+    public int desmarcar(int idreserva) {
+        int r = 0;
+        String sql = "UPDATE reserva SET estado=? WHERE id_reserva=" + idreserva;
+        try {
+            conn = cn.conectar();
+            ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, 1);
+
+            r = ps.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return r;
+    }
+    
+    public List<DetalleReserva> detalle(int idreserva) {
+        ArrayList<DetalleReserva> list = new ArrayList<>();
+        
+        String sql = "SELECT ds.f_atencion, ds.npersonas, ds.total, "
+                + " s.nom_serv, s.descripcion FROM detalleservicios ds INNER JOIN servicio s "
+                + " ON ds.id_servicio = s.id_servicio WHERE ds.id_reserva = ?;";
+        try {
+            conn = cn.conectar();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idreserva);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                DetalleReserva detalle = new DetalleReserva();
+                detalle.setFechaServicio(rs.getDate("f_atencion").toLocalDate());
+                detalle.setNpersonas(rs.getInt("npersonas"));
+                detalle.setTotal(rs.getInt("total"));
+                detalle.setNombre(rs.getString("nom_serv"));
+                detalle.setDescripcion(rs.getString("descripcion"));
+
+                list.add(detalle);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 }

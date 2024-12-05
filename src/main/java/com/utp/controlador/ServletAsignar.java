@@ -1,9 +1,10 @@
 package com.utp.controlador;
 
+import com.google.gson.Gson;
 import com.utp.modelo.AsignacionDAO;
 import com.utp.modelo.UsuarioDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,7 +27,6 @@ public class ServletAsignar extends HttpServlet {
             switch (accion) {
                 case "listar":
                     List listaReserva = asignaDAO.listasignacion();
-                    System.out.println(listaReserva.size());
                     List listatecnicos = userDAO.listar();
                     request.setAttribute("reservas", listaReserva);
                     request.setAttribute("tecnicos", listatecnicos);
@@ -104,8 +104,21 @@ public class ServletAsignar extends HttpServlet {
     }
 
     private void horarioTecnico(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        int idTecnico = Integer.parseInt(request.getParameter("id"));
-        List listaHorario = asignaDAO.asignacionesTecnico(idTecnico);
-    }
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            List<HashMap<String, Object>> eventos = asignaDAO.asignacionesTecnico(id);
 
+            // Convertir la lista a JSON para FullCalendar
+            String eventosJson = new Gson().toJson(eventos);
+
+            // Pasar el JSON al JSP
+            request.setAttribute("eventosJson", eventosJson);
+            request.getRequestDispatcher("VMHorarioXTecnico.jsp").forward(request, response);
+
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "El ID del técnico es inválido.");
+        } catch (IOException | ServletException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ocurrió un error procesando el horario.");
+        }
+    }
 }

@@ -39,7 +39,6 @@ public class RewardsDAO {
                 detalle.setDescuento(rs.getInt(9));
                 detalle.setEstado(rs.getInt(10));
                 detalle.setCodpromo(rs.getString(11));
-                System.out.println(detalle.getCodpromo());
                 list.add(detalle);
             }
         } catch (SQLException e) {

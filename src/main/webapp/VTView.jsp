@@ -9,13 +9,23 @@
     <jsp:include page="includes/sidebarhead.jsp"></jsp:include>
         <body>
             <div class="container-fluid">    
-                <h1 class="h3 mb-2 text-gray-800">
-                    Codigo de la Reserva: 00000${select.getIdcita()}
-            </h1>
+                
+            
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h3 class="m-0 font-weight-bold text-primary">N° de Reserva: 000000${idpago}</h3>
+
+                <a href="ServletTecnico?accion=listar&id=${usuario.getCodigo()}" class="btn btn-secondary btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-arrow-left"></i>
+                    </span>
+                    <span class="text">Volver</span>
+                </a>
+
+            </div>
 
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Detalle de la Cita</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Detalle de la reserva</h6>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -24,53 +34,36 @@
                                 <tr>
                                     <th>Nombre del Servicio</th>
                                     <th>Descripcion</th>
-                                    <th>Precio</th>
+                                    <th>Fecha</th>
                                     <th>N° Personas</th>
-                                    <th>Subtotal</th>
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="det" items="${detalles}" varStatus="status">
+                                <c:forEach var="de" items="${detalle}" varStatus="status">
                                     <tr>
-                                        <td>${det.nomserv}</td>
-                                        <td>${det.descripcion}</td>
-                                        <td>S/ ${det.subtotal}0</td>
-                                        <td>${det.npersonas}</td>
-                                        <td>S/ ${det.total}0</td>
+                                        <td>${de.nombre}</td>
+                                        <td>${de.descripcion}</td>
+                                        <td>${de.fechaServicio}</td>
+                                        <td>${de.npersonas}</td>
+                                        <td>${de.total}</td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th>Fecha: ${select.getFecha()}</th>
-                                    <th></th>
-                                    <th></th>
-                                    <th>Monto total:</th>
-                                    <th>S/ ${select.getMonto()}0</th>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>Total:</td>
+                                    <td>${total}</td>
                                 </tr>
-                                <tr>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th>
-                                        <c:if test="${usuario.getRol() != 3}">
-                                            <a href="VMAsignar.jsp" class="btn btn-info btn-circle">
-                                                <i class="fas fa-arrow-left"></i>
-                                            </a>
-                                        </c:if>
-                                        <c:if test="${usuario.getRol() == 3}">
-                                            <a href="ServletCitas?menu=asigna&accion=ver&idtecnic=${usuario.getCodigo()}" class="btn btn-info btn-circle">
-                                                <i class="fas fa-arrow-left"></i>
-                                            </a>
-                                        </c:if>
-                                    </th>
-                                </tr> 
                             </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
+        </div>
     </body>
     <jsp:include page="includes/sidebarfoot.jsp"></jsp:include>
 </html>

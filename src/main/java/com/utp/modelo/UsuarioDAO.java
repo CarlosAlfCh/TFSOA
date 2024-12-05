@@ -69,34 +69,34 @@ public class UsuarioDAO implements CRUD<Usuario> {
             ps.setString(5, nuevo.getCorreo());
             ps.setString(6, nuevo.getTelefono());
             String contrasena = nuevo.getContrasena();
-            
+
             if (contrasena == null || contrasena.trim().isEmpty()) {
                 ps.setString(7, nuevo.getDni()); // Asigna el DNI como contraseña
             } else {
                 ps.setString(7, contrasena);
             }
-            
+
             ps.setString(8, nuevo.getTurno());
-            
+
             if (nuevo.getFoto() != null) {
                 ps.setBlob(9, nuevo.getFoto());
             } else {
                 ps.setNull(9, java.sql.Types.BLOB);
             }
-            
+
             ps.setInt(10, 1); // Nuevo registro se inserta en estado activo=1
-            ps.setInt(11, nuevo.getRol()); 
+            ps.setInt(11, nuevo.getRol());
             ps.setString(12, nuevo.getDireccion());
             ps.setInt(13, nuevo.getDistrito());
-            if(nuevo.getIdespecialidad()==4){
+            if (nuevo.getIdespecialidad() == 4) {
                 ps.setInt(14, nuevo.getIdespecialidad());
             }
 
             r = ps.executeUpdate();
-            
+
         } catch (SQLException e) {
             System.out.println(e);
-        } 
+        }
         return r;
     }
 
@@ -134,12 +134,12 @@ public class UsuarioDAO implements CRUD<Usuario> {
 
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
         return r;
     }
 
     @Override
-    public int eliminar(int eliminado) {
+    public int desactivar(int eliminado) {
         int r = 0;
         String sql = "UPDATE persona SET estado=? WHERE codigo=" + eliminado;
 
@@ -150,12 +150,29 @@ public class UsuarioDAO implements CRUD<Usuario> {
             r = ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
         return r;
+    }
+    
+    @Override
+    public int eliminar(int eliminado) {
+        int resultado = 0;
+        String sql = "DELETE FROM persona WHERE codigo = ?";
+
+        try {
+            conn = cn.conectar();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, eliminado);
+            resultado = ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error al intentar eliminar físicamente: " + e.getMessage());
+        }   
+        
+        return resultado;
     }
 
     @Override
-    public int restaurar(int restaurado) {
+    public int activar(int restaurado) {
         int r = 0;
         String sql = "UPDATE persona SET estado=? WHERE codigo=?";
 
@@ -167,7 +184,7 @@ public class UsuarioDAO implements CRUD<Usuario> {
             r = ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
         return r;
     }
 
@@ -192,13 +209,13 @@ public class UsuarioDAO implements CRUD<Usuario> {
                 user.setCorreo(rs.getString("correo"));
                 user.setTelefono(rs.getString("telefono"));
                 user.setDireccion(rs.getString("direccion"));
-                user.setDistrito(rs.getInt("id_distrito")); 
+                user.setDistrito(rs.getInt("id_distrito"));
                 user.setIdespecialidad(rs.getInt("idespecialidad"));
-                user.setTurno(rs.getString("turno")); 
+                user.setTurno(rs.getString("turno"));
             }
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
 
         return user;
     }

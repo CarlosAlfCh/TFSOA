@@ -78,7 +78,7 @@ public class ServicioDAO implements CRUD<Servicio> {
             r = ps.executeUpdate();
 
         } catch (SQLException e) {
-        } 
+        }
         return r;
     }
 
@@ -111,29 +111,28 @@ public class ServicioDAO implements CRUD<Servicio> {
 
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
         return r;
     }
 
     @Override
     public int eliminar(int eliminado) {
-        int r = 0;
-        String sql = "UPDATE servicio SET estado=? WHERE id_servicio=?";
+        int resultado = 0;
+        String sql = "DELETE FROM servicio WHERE id_servicio = ?";
 
         try {
             conn = cn.conectar();
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, 0);
-            ps.setInt(2, eliminado);
-            r = ps.executeUpdate();
+            ps.setInt(1, eliminado);
+            resultado = ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.toString());
+            System.err.println("Error al intentar eliminar físicamente: " + e.getMessage());
         } 
-        return r;
+        return resultado;
     }
 
     @Override
-    public int restaurar(int restaurado) {
+    public int activar(int restaurado) {
         int r = 0;
         String sql = "UPDATE servicio SET estado=? WHERE id_servicio=?";
 
@@ -145,7 +144,24 @@ public class ServicioDAO implements CRUD<Servicio> {
             r = ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
+        return r;
+    }
+
+    @Override
+    public int desactivar(int desactiva) {
+        int r = 0;
+        String sql = "UPDATE servicio SET estado=? WHERE id_servicio=?";
+
+        try {
+            conn = cn.conectar();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, 0);
+            ps.setInt(2, desactiva);
+            r = ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+        }
         return r;
     }
 

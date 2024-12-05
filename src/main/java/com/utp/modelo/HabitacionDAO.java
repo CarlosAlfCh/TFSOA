@@ -78,7 +78,7 @@ public class HabitacionDAO implements CRUD<Habitacion> {
             r = ps.executeUpdate();
 
         } catch (SQLException e) {
-        } 
+        }
         return r;
     }
 
@@ -96,8 +96,8 @@ public class HabitacionDAO implements CRUD<Habitacion> {
             ps.setString(4, modificado.getDirHotel());
             ps.setInt(5, modificado.getDisHotel());
             ps.setDouble(6, modificado.getPrecioNoche());
-            
-            if (modificado.getFoto()!= null) {
+
+            if (modificado.getFoto() != null) {
                 ps.setBlob(7, modificado.getFoto());
             } else {
                 ps.setNull(7, java.sql.Types.BLOB);
@@ -110,12 +110,28 @@ public class HabitacionDAO implements CRUD<Habitacion> {
 
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
         return r;
     }
 
     @Override
     public int eliminar(int eliminado) {
+        int resultado = 0;
+        String sql = "DELETE FROM habitacion WHERE id_habitacion = ?";
+
+        try {
+            conn = cn.conectar();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, eliminado);
+            resultado = ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error al intentar eliminar físicamente: " + e.getMessage());
+        } 
+        return resultado;
+    }
+
+    @Override
+    public int desactivar(int desactiva) {
         int r = 0;
         String sql = "UPDATE habitacion SET estado=? WHERE id_habitacion=?";
 
@@ -123,16 +139,16 @@ public class HabitacionDAO implements CRUD<Habitacion> {
             conn = cn.conectar();
             ps = conn.prepareStatement(sql);
             ps.setInt(1, 0);
-            ps.setInt(2, eliminado);
+            ps.setInt(2, desactiva);
             r = ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
         return r;
     }
 
     @Override
-    public int restaurar(int restaurado) {
+    public int activar(int restaurado) {
         int r = 0;
         String sql = "UPDATE habitacion SET estado=? WHERE id_habitacion=?";
 
@@ -144,29 +160,29 @@ public class HabitacionDAO implements CRUD<Habitacion> {
             r = ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
         return r;
     }
-    
-    public int estado(int id, int room) {
+
+    public int estado(int id, int estado) {
         int r = 0;
         String sql = "UPDATE habitacion SET estado=? WHERE id_habitacion=?";
 
         try {
             conn = cn.conectar();
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, room);
+            ps.setInt(1, estado);
             ps.setInt(2, id);
             r = ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.toString());
-        } 
+        }
         return r;
     }
 
     @Override
     public Habitacion seleccionado(int id) {
-        Habitacion h = new Habitacion();        
+        Habitacion h = new Habitacion();
         String sql = "select * from habitacion where id_habitacion=?";
         try {
             conn = cn.conectar();
@@ -181,16 +197,16 @@ public class HabitacionDAO implements CRUD<Habitacion> {
                 h.setDirHotel(rs.getString("direccion"));
                 h.setDisHotel(rs.getInt("id_distrito"));
                 h.setPrecioNoche(rs.getDouble("precioxnoche"));
-                h.setEstado(rs.getInt("estado")); 
-                
+                h.setEstado(rs.getInt("estado"));
+
                 Blob fotoBlob = rs.getBlob("foto_habitacion");
-                
+
                 if (fotoBlob != null) {
                     h.setFoto(fotoBlob.getBinaryStream());
                 } else {
                     h.setFoto(null);
-                }      
-                
+                }
+
             }
         } catch (SQLException e) {
             System.out.println(e.toString());

@@ -130,8 +130,8 @@
                                 <c:if test="${user.rol < 4}">
                                     <tr>
                                         <td>${user.codigo}</td>
-                                        
-                                        <td>${user.nombres} ${user.apelpat} ${cl.apelmat}
+
+                                        <td>${user.nombres} ${user.apelpat} ${user.apelmat}
                                             <div class="my-2"></div>
                                             <c:if test="${user.rol == 1}">                                                
                                                 <span class="btn-sm btn-success">Administrador</span>                                                
@@ -159,33 +159,53 @@
 
                                         </td>
                                         <td>
-                                            <a href="Controlador?menu=usuario&accion=seleciona&us=${user.codigo}" class="btn btn-warning btn-icon-split btn-sm">
-                                                <span class="icon text-white-50">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </span>
-                                                <span class="text">Modificar</span>
+                                            <a href="Controlador?menu=usuario&accion=seleciona&us=${user.codigo}" class="btn btn-warning btn-circle">
+                                                <i class="fas fa-pencil-alt"></i>
                                             </a>
-                                            <div class="my-2"></div>
                                             <c:if test="${user.estado == 1}">  
-                                                <a href="Controlador?menu=usuario&accion=eliminar&delete=${user.codigo}" class="btn btn-danger btn-icon-split btn-sm">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-eraser"></i>
-                                                    </span>
-                                                    <span class="text">Eliminar &nbsp;</span>
+                                                <a href="Controlador?menu=usuario&accion=desactivar&desactive=${user.codigo}" class="btn btn-secondary btn-circle">
+                                                    <i class="fas fa-eraser"></i>
                                                 </a>
                                             </c:if>
                                             <c:if test="${user.estado == 0}"> 
-                                                <a href="Controlador?menu=usuario&accion=activar&active=${user.codigo}" class="btn btn-info btn-icon-split btn-sm">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-recycle"></i>
-                                                    </span>
-                                                    <span class="text">Activar &nbsp;</span>
+                                                <a href="Controlador?menu=usuario&accion=activar&active=${user.codigo}" class="btn btn-info btn-circle">
+                                                    <i class="fas fa-recycle"></i>
                                                 </a>
                                             </c:if>
+                                            <a class="btn btn-danger btn-circle" data-toggle="modal" data-target="#modal${user.codigo}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
                                         </td>
                                     </tr>
-                                </c:if>
-                            </c:forEach>
+
+                                    <!-- Modal para eliminar usuarios -->
+                                <div class="modal fade" id="modal${user.codigo}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">¿Eliminar usuario?</h5>
+                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <div class="card-header">
+                                                    <label style="color: #4c3d3d">Se procedera a eliminar de manera permanente a: ${user.nombres} ${user.apelpat} ${user.apelmat}</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="card-footer">
+                                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                                                <a class="btn btn-success" href="Controlador?menu=usuario&accion=eliminar&delete=${user.codigo}">Eliminar</a>
+                                            </div>  
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </c:if>
+                        </c:forEach>
                         </tbody>
                     </table>
                 </div>

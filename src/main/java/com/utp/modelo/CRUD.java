@@ -8,6 +8,7 @@ public interface CRUD <T>
     public abstract int insertar(T nuevo);                      
     public abstract int modificar(T modificado);                
     public abstract int eliminar(int eliminado);
-    public abstract int restaurar(int restaurado);
+    public abstract int desactivar(int eliminado);
+    public abstract int activar(int restaurado);
     public abstract T seleccionado(int id);
 }

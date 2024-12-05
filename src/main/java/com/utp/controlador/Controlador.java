@@ -33,36 +33,29 @@ public class Controlador extends HttpServlet {
         try {
             if (menu != null) {
                 switch (menu) {
-                    case "principal":
-                        System.out.println("hola :)");
-                        request.getRequestDispatcher("VMInicio.jsp").forward(request, response);
-                        break;
                     case "usuario":
                         switch (accion) {
                             case "listar":
                                 List lista = userdao.listar();
                                 request.setAttribute("usuarios", lista);
-                                System.out.println("Listo" + lista.size());
                                 break;
                             case "agregar":
                                 adduser(request, response);
-                                System.out.println("Agrego??");
                                 break;
                             case "seleciona":
                                 selectuser(request, response);
-                                System.out.println("selecciono??");
                                 break;
                             case "modificar":
                                 moduser(request, response);
-                                System.out.println("Modifico??");
                                 break;
                             case "eliminar":
                                 deletuser(request, response);
-                                System.out.println("Elimino??");
                                 break;
                             case "activar":
                                 activeuser(request, response);
-                                System.out.println("Activo??");
+                                break;
+                            case "desactivar":
+                                desactivauser(request, response);
                                 break;
                             default:
                                 System.out.println("No se pudo usuario:C");
@@ -74,27 +67,24 @@ public class Controlador extends HttpServlet {
                             case "listar":
                                 List lista = cliendao.listar();
                                 request.setAttribute("clientes", lista);
-                                System.out.println("Listo cliente??");
                                 break;
                             case "agregar":
                                 addclient(request, response);
-                                System.out.println("Agrego cliente??");
                                 break;
                             case "seleciona":
                                 selectclient(request, response);
-                                System.out.println("selecciono cliente??");
                                 break;
                             case "modificar":
                                 modclient(request, response);
-                                System.out.println("Modifico cliente??");
                                 break;
                             case "eliminar":
                                 deletclient(request, response);
-                                System.out.println("Elimino cliente??");
                                 break;
                             case "activar":
                                 activeclient(request, response);
-                                System.out.println("Activo cliente??");
+                                break;
+                            case "desactivar":
+                                desactivaclient(request, response);
                                 break;
                             default:
                                 System.out.println("No se pudo cliente:C");
@@ -106,27 +96,24 @@ public class Controlador extends HttpServlet {
                             case "listar":
                                 List lista = servdao.listar();
                                 request.setAttribute("servicios", lista);
-                                System.out.println("Listo servicio??");
                                 break;
                             case "agregar":
                                 addserv(request, response);
-                                System.out.println("Agrego servicio??");
                                 break;
                             case "seleciona":
                                 selectserv(request, response);
-                                System.out.println("selecciono servicio??");
                                 break;
                             case "modificar":
                                 modserv(request, response);
-                                System.out.println("Modifico servicio??");
                                 break;
                             case "eliminar":
                                 deletserv(request, response);
-                                System.out.println("Elimino servicio??");
                                 break;
                             case "activar":
                                 activeserv(request, response);
-                                System.out.println("Activo servicio??");
+                                break;
+                            case "desactivar":
+                                desactivaserv(request, response);
                                 break;
                             default:
                                 System.out.println("No se pudo servicio:C");
@@ -150,6 +137,9 @@ public class Controlador extends HttpServlet {
                                 break;
                             case "cambio":
                                 cambioestado(request, response);
+                                break;
+                            case "eliminar":
+                                deleteroom(request, response);
                                 break;
                             default:
                                 System.out.println("No se pudo room:C");
@@ -290,18 +280,20 @@ public class Controlador extends HttpServlet {
 
     private void deletuser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int cod = Integer.parseInt(request.getParameter("delete"));
-        System.out.println(cod);
         userdao.eliminar(cod);
         request.getRequestDispatcher("Controlador?menu=usuario&accion=listar").forward(request, response);
-        System.out.println("Niaa :)");
     }
 
     private void activeuser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int cod = Integer.parseInt(request.getParameter("active"));
-        System.out.println(cod);
-        userdao.restaurar(cod);
+        userdao.activar(cod);
         request.getRequestDispatcher("Controlador?menu=usuario&accion=listar").forward(request, response);
-        System.out.println("UWU :)");
+    }
+
+    private void desactivauser(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        int cod = Integer.parseInt(request.getParameter("desactive"));
+        userdao.desactivar(cod);
+        request.getRequestDispatcher("Controlador?menu=usuario&accion=listar").forward(request, response);
     }
 
     private void addclient(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -374,18 +366,20 @@ public class Controlador extends HttpServlet {
 
     private void deletclient(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int cod = Integer.parseInt(request.getParameter("delete"));
-        System.out.println(cod);
         cliendao.eliminar(cod);
         request.getRequestDispatcher("Controlador?menu=cliente&accion=listar").forward(request, response);
-        System.out.println("OK :)");
     }
 
     private void activeclient(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int cod = Integer.parseInt(request.getParameter("active"));
-        System.out.println(cod);
-        cliendao.restaurar(cod);
+        cliendao.activar(cod);
         request.getRequestDispatcher("Controlador?menu=cliente&accion=listar").forward(request, response);
-        System.out.println("Cliente UWU :)");
+    }
+
+    private void desactivaclient(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        int cod = Integer.parseInt(request.getParameter("desactive"));
+        cliendao.desactivar(cod);
+        request.getRequestDispatcher("Controlador?menu=cliente&accion=listar").forward(request, response);
     }
 
     private void addserv(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -445,18 +439,20 @@ public class Controlador extends HttpServlet {
 
     private void deletserv(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int cod = Integer.parseInt(request.getParameter("delete"));
-        System.out.println(cod);
         servdao.eliminar(cod);
         request.getRequestDispatcher("Controlador?menu=servicio&accion=listar").forward(request, response);
-        System.out.println("Waza serv:)");
     }
 
     private void activeserv(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int cod = Integer.parseInt(request.getParameter("active"));
-        System.out.println(cod);
-        servdao.restaurar(cod);
+        servdao.activar(cod);
         request.getRequestDispatcher("Controlador?menu=servicio&accion=listar").forward(request, response);
-        System.out.println("Servicio UWU :)");
+    }
+
+    private void desactivaserv(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        int cod = Integer.parseInt(request.getParameter("desactive"));
+        servdao.desactivar(cod);
+        request.getRequestDispatcher("Controlador?menu=servicio&accion=listar").forward(request, response);
     }
 
     private void logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -517,7 +513,7 @@ public class Controlador extends HttpServlet {
         room.setPiso(piso);
         room.setTipo(tipo);
         room.setDescripcion(descripcion);
-        
+
         int resp = roomDAO.modificar(room);
         System.out.println(resp);
         request.getRequestDispatcher("Controlador?menu=room&accion=listar").forward(request, response);
@@ -526,9 +522,13 @@ public class Controlador extends HttpServlet {
     private void cambioestado(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int id = Integer.parseInt(request.getParameter("id"));
         int estado = Integer.parseInt(request.getParameter("estado"));
-        
         roomDAO.estado(id, estado);
         request.getRequestDispatcher("Controlador?menu=room&accion=listar").forward(request, response);
-        
+    }
+
+    private void deleteroom(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        int id = Integer.parseInt(request.getParameter("delete"));
+        roomDAO.eliminar(id);
+        request.getRequestDispatcher("Controlador?menu=room&accion=listar").forward(request, response);
     }
 }

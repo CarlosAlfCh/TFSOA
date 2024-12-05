@@ -54,30 +54,6 @@ public class ServletCitas extends HttpServlet {
                     case "confirmar":
                         confirmar(request, response);
                         break;
-                    case "asigna":
-                        switch (accion) {
-                            case "agregar":
-                                assing(request, response);
-                                break;
-                            case "borrar":
-                                eraser(request, response);                             
-                                break;
-                            case "select":
-                                seleccion(request, response);                               
-                                break;
-                            case "ver":
-                                vereser(request, response);
-                                break;
-                            case "info":
-                                inforeser(request, response);
-                                break;
-                            case "realizado":
-                                okconsigna(request, response);
-                                break;
-                            default:
-                                System.out.println("No se pudo Asignar :C");
-                        }
-                        break;
                     default:
                         System.out.println("Tiempo Agotado :C");
                 }

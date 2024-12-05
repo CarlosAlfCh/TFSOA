@@ -2,13 +2,11 @@ package com.utp.controlador;
 
 import com.utp.entidad.Cliente;
 import com.utp.entidad.Usuario;
-import com.utp.entidad.pagos.Reserva;
 import com.utp.modelo.ClienteDAO;
 import com.utp.modelo.ReservaDAO;
 import com.utp.modelo.UsuarioDAO;
 import com.utp.modelo.AutenticacionDAO;
 import com.utp.mensajes.RecoverPassword;
-import com.utp.modelo.DetalleServicioDAO;
 
 import java.io.IOException;
 
@@ -115,7 +113,6 @@ public class ServletValida extends HttpServlet {
 
         // Validar usuario
         Usuario user = autenticacionDAO.validar(correo, contrasena);
-        System.out.println(user.getRol());
 
         if (user.getRol() == 0) {
             // Usuario no encontrado o credenciales incorrectas
@@ -127,14 +124,14 @@ public class ServletValida extends HttpServlet {
 
         if (user.getRol() != 4) {
             // Usuario no cliente
-            List<Reserva> listres = reservaDAO.listasign(user.getCodigo());
+            List listres = reservaDAO.listasign(user.getCodigo());
             int ms = listres.size();
 
             request.getSession().setAttribute("usuario", user);
             request.getSession().setAttribute("asig", listres);
             request.getSession().setAttribute("msj", ms);
 
-            request.getRequestDispatcher("Controlador?menu=principal").forward(request, response);
+            request.getRequestDispatcher("ServletInicio?menu=principal&id="+user.getCodigo()).forward(request, response);
         } else {
             // Usuario cliente
             request.getSession().setAttribute("cliente", user);
@@ -168,7 +165,6 @@ public class ServletValida extends HttpServlet {
         cliente.setContrasena(contrasena);
 
         int resp = clienteDAO.insertar(cliente);
-        System.out.println(resp);
 
         request.setAttribute("cliente", cliente);
 
@@ -182,6 +178,8 @@ public class ServletValida extends HttpServlet {
         if (request.getSession().getAttribute("cliente") != null) {
             System.out.println(request.getSession().getAttribute("cliente"));
             request.getSession().removeAttribute("cliente");
+            request.getSession().removeAttribute("msj");
+            request.getSession().removeAttribute("asig");
             response.sendRedirect("login.jsp");
         } else {
             response.sendRedirect("index.jsp");

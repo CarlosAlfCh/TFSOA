@@ -4,7 +4,6 @@ import com.utp.mensajes.DiscountPromotions;
 import com.utp.modelo.ClienteDAO;
 import com.utp.modelo.RewardsDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +28,6 @@ public class ServletTarifas extends HttpServlet {
             switch (accion) {
                 case "listar":
                     List listaclientespromo = rewardsDAO.listarClientesPromo();
-                    System.out.println(listaclientespromo.size());
                     List listaclientes = cliendao.listar();
                     request.setAttribute("promocionesxcliente", listaclientespromo);
                     request.setAttribute("clientes", listaclientes);
@@ -42,7 +40,6 @@ public class ServletTarifas extends HttpServlet {
                     updateCodigoPromo(request, response);
                     break;
                 case "invalidar":
-                    System.out.println("entre");
                     revokeCodigoPromo(request, response);
                     break;
                 default:
@@ -97,7 +94,6 @@ public class ServletTarifas extends HttpServlet {
         int descuento = Integer.parseInt(request.getParameter("txtdescuento"));
         String correo = request.getParameter("txtcorreo");
 
-        System.out.println(idcliente+" "+descuento+" "+correo);
         promotions.enviarCodigoPromocion(correo, idcliente, descuento);
         request.getRequestDispatcher("ServletTarifas?accion=listar").forward(request, response);
     }
@@ -106,16 +102,13 @@ public class ServletTarifas extends HttpServlet {
         int idcliente = Integer.parseInt(request.getParameter("txtidcliente"));
         int descuento = Integer.parseInt(request.getParameter("txtdescuento"));
         String correo = request.getParameter("txtcorreo");
-        System.out.println(idcliente+" "+descuento+" "+correo+" ahh");
         promotions.enviarNuevoCodigoPromocion(correo, idcliente, descuento);
         request.getRequestDispatcher("ServletTarifas?accion=listar").forward(request, response);
     }
 
     private void revokeCodigoPromo(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int idcliente = Integer.parseInt(request.getParameter("idcliente"));
-        System.out.println(idcliente+" revocado");
-        int r=rewardsDAO.invalidarCodPromo(idcliente);
-        System.out.println(r);
+        rewardsDAO.invalidarCodPromo(idcliente);
         request.getRequestDispatcher("ServletTarifas?accion=listar").forward(request, response);
         
     }

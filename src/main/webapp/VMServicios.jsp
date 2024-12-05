@@ -77,13 +77,13 @@
                                             </select>                                     
                                         </td>
                                     </tr>
-                                    
+
                                 </table>
                                 <table class="table table-light"  width="100%" cellspacing="0">
                                     <tr>
                                         <td>
-                                        Descripción:
-                                        <textarea class="form-control" name="txtdescripcion" rows="5" cols="10"></textarea>
+                                            Descripción:
+                                            <textarea class="form-control" name="txtdescripcion" rows="5" cols="10"></textarea>
                                         </td>
                                     </tr>
                                     <tr>
@@ -141,32 +141,53 @@
                                             </c:if>
                                         </td>
                                         <td>
-                                            <a href="Controlador?menu=servicio&accion=seleciona&ser=${serv.idservicio}" class="btn btn-warning btn-icon-split btn-sm">
-                                                <span class="icon text-white-50">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </span>
-                                                <span class="text">Modificar</span>
+                                            <a href="Controlador?menu=servicio&accion=seleciona&ser=${serv.idservicio}" class="btn btn-warning btn-circle">
+                                                <i class="fas fa-pencil-alt"></i>
                                             </a>
                                             <div class="my-2"></div>
                                             <c:if test="${serv.estadoserv == 1}">  
-                                                <a href="Controlador?menu=servicio&accion=eliminar&delete=${serv.idservicio}" class="btn btn-danger btn-icon-split btn-sm">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-eraser"></i>
-                                                    </span>
-                                                    <span class="text">Eliminar &nbsp;</span>
+                                                <a href="Controlador?menu=servicio&accion=desactivar&desactive=${serv.idservicio}" class="btn btn-secondary btn-circle">
+                                                    <i class="fas fa-eraser"></i>
                                                 </a>
                                             </c:if>
                                             <c:if test="${serv.estadoserv == 0}"> 
-                                                <a href="Controlador?menu=servicio&accion=activar&active=${serv.idservicio}" class="btn btn-info btn-icon-split btn-sm">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-recycle"></i>
-                                                    </span>
-                                                    <span class="text">Activar &nbsp;&nbsp;&nbsp;</span>
+                                                <a href="Controlador?menu=servicio&accion=activar&active=${serv.idservicio}" class="btn btn-info btn-circle">
+                                                    <i class="fas fa-recycle"></i>
                                                 </a>
                                             </c:if>
-                                            -
+                                            
+                                            <a class="btn btn-danger btn-circle" data-toggle="modal" data-target="#modal${serv.idservicio}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
                                         </td>
                                     </tr>
+                                    
+                                    <!-- Modal para eliminar servicios -->
+                                    <div class="modal fade" id="modal${serv.idservicio}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">¿Eliminar servicio?</h5>
+                                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <div class="card-header">
+                                                        <label style="color: #4c3d3d">Se procedera a eliminar de manera permanente el servicio de: ${serv.nomserv}</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="card-footer">
+                                                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                                                    <a class="btn btn-success" href="Controlador?menu=servicio&accion=eliminar&delete=${serv.idservicio}">Eliminar</a>
+                                                </div>  
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
                                 </c:forEach>
                             </tbody>
                         </table>

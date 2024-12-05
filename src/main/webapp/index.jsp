@@ -1,9 +1,3 @@
-<%-- 
-    Document   : index
-    Created on : 10 jun. 2023, 10:27:23
-    Author     : LENOVO
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="com.utp.entidad.Servicio"%>
