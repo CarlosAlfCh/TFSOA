@@ -1,5 +1,6 @@
 package com.utp.modelo;
 
+import com.utp.entidad.info.Asistencia;
 import com.utp.util.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AsistenciaDAO {
 
@@ -100,7 +103,32 @@ public class AsistenciaDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
+        }
         return -1; // Error
+    }
+
+    public List<Asistencia> obtenerAsistencias() {
+        List<Asistencia> asistencias = new ArrayList<>();
+        String sql = "SELECT id, id_tecnico, fecha, hora_ingreso, hora_salida, nhoras FROM asistencia";
+
+        try (Connection conn = cn.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                int idTecnico = rs.getInt("id_tecnico");
+                LocalDate fecha = rs.getDate("fecha").toLocalDate();
+                LocalTime horaIngreso = rs.getTime("hora_ingreso").toLocalTime();
+                LocalTime horaSalida = rs.getTime("hora_salida") != null ? rs.getTime("hora_salida").toLocalTime() : null;
+                int nhoras = rs.getInt("nhoras");
+
+                Asistencia asistencia = new Asistencia(id, idTecnico, fecha, horaIngreso, horaSalida, nhoras);
+                asistencias.add(asistencia);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return asistencias;
     }
 }

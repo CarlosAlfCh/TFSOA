@@ -190,8 +190,15 @@
                             <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                                 <div class="bg-white py-2 collapse-inner rounded">
                                     <h6 class="collapse-header">Atencion de:</h6>
-                                    <a class="collapse-item" href="#">Spa</a>
-                                    <a class="collapse-item" href="#">Hotel</a>
+                                    <a class="collapse-item" href="GenerarInformeServlet">Spa</a>
+                                    <a class="collapse-item" href="GenerarInformeHabitacionesServlet">Hotel</a>
+                                    <a class="collapse-item" href="GenerarInformeGananciasServlet">Ganancias Totales</a>
+                                    <a class="collapse-item" href="GenerarInformeAtencionPorTecnicoServlet">Atencion por tecnico</a>
+                                    <a class="collapse-item" href="GenerarInformeHabitacionesEstadoServlet">Hotel por estado</a> 
+                                    <a class="collapse-item" href="GenerarBoletaReservaServlet">Boletas</a> 
+                                    <a class="collapse-item" href="GenerarInformeAsistenciaServlet">Asistencias</a> 
+                                    <a class="collapse-item" href="GenerarAnalisisSatisfaccionServlet">Satisfaccion</a>
+                                    
                                 </div>
                             </div>
                         </li>
